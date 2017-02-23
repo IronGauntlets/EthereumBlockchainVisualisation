@@ -1,7 +1,3 @@
-echo "# EthereumVisualisation" >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git remote add origin https://github.com/aneequesafdar/EthereumVisualisation.git
-git push -u origin master
+#Ethereum Blockchain Visualisations
 
+Visualising ethereum blockchain transactions to gain deeper insights into patterns that occur through accounts and smart contracts interactions.

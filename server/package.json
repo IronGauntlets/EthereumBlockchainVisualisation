@@ -1,0 +1,15 @@
+{
+  "name": "ethereum-blockchain-visualisation",
+  "version": "0.1.0",
+  "description": "Visualising Ethereum Blockchain",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Aneeque Safdar",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.14.1",
+    "web3": "^0.18.2"
+  }
+}
