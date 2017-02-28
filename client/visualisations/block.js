@@ -1,9 +1,13 @@
-url = "http://localhost:8081";
+var host = "http://localhost";
+var port = "3000";
 
-http.get(url, (res, err) => {
+var url = host + ':' + port;
+
+var requestURL = url + '/block';
+
+
+http.get(url, (res) => {
   if (res != null) {
     console.log(res);
-  } else {
-    console.error(err);
   }
-})
+});

@@ -7,10 +7,8 @@ var req = [
   "https://etherchain.org/api/blocks/"+ offset+ "/" + count //Gets count blocks starting from the offest
 ]
 
-http.get(req[1], (res, err) => {
+http.get(req[1], (res) => {
   if (res != null) {
     console.log(JSON.parse(res));
-  } else {
-    console.error(err);
   }
 })
