@@ -8,7 +8,5 @@ var req = [
 ]
 
 http.get(req[1], (res) => {
-  if (res != null) {
-    console.log(JSON.parse(res));
-  }
+  console.log(JSON.parse(res));
 })

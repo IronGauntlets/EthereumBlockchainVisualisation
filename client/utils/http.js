@@ -7,7 +7,7 @@ const http = {
         if (xhr.status == 200) {
           callback(xhr.responseText);
         } else {
-          console.error("GET respose for request: " + url + ", " + xhr.statusText);
+          console.error("GET respose for request: " + url + ", " + xhr.status + ' ' + xhr.statusText);
         }
       }
     }
