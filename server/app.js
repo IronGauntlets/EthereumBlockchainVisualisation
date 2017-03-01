@@ -17,7 +17,7 @@ app.use(function(req, res, next){
   next();
 })
 
-//
+// Information about the api
 app.get('/' + apiPrefix, function(req, res) {
   res.send("API for accessing Ethereum blockchain data.");
 })
