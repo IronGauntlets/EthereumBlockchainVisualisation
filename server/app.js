@@ -11,6 +11,13 @@ app.use(function(req, res, next) {
   next();
 })
 
+// Middleware for logging requests
+app.use(function(req, res, next){
+  console.log('Request recieved for URI: ' + req.url + ' at ' + new Date().toUTCString());
+  next();
+})
+
+//
 app.get('/' + apiPrefix, function(req, res) {
   res.send("API for accessing Ethereum blockchain data.");
 })
@@ -28,6 +35,7 @@ app.use('/' + apiPrefix + '/transaction', transaction);
 const blockchain = require('./controllers/blockchain.js');
 app.use('/' + apiPrefix + '/blockchain', blockchain);
 
+//Start listening
 var server = app.listen(3000, 'localhost', function(){
   var host = server.address().address;
   var port = server.address().port;
