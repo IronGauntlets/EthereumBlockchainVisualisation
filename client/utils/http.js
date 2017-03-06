@@ -5,9 +5,9 @@ const http = {
     xhr.onreadystatechange = function () {
       if (xhr.readyState == XMLHttpRequest.DONE) {
         if (xhr.status == 200) {
-          callback(xhr.responseText);
+          callback(xhr.responseText, null);
         } else {
-          console.error("GET respose for request: " + url + ", " + xhr.status + ' ' + xhr.statusText);
+          callback(null, xhr.statusText);
         }
       }
     }
