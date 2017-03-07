@@ -1,6 +1,10 @@
 const express = require('express');
 const app  = express();
 
+//Gobal web3JS object to communicate with the blockchain
+const Web3 = require('web3');
+web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+
 const apiPrefix = 'api'
 
 // For working locally, will need to disable once running on dedicated server
@@ -13,7 +17,8 @@ app.use(function(req, res, next) {
 
 // Middleware for logging requests
 app.use(function(req, res, next){
-  console.log('Request recieved for URI: ' + req.url + ' at ' + new Date().toUTCString());
+  console.log();
+  console.log(req.method + ' request recieved for URI: ' + req.url + ' at ' + new Date().toUTCString());
   next();
 })
 
