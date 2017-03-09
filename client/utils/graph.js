@@ -48,10 +48,10 @@ function TransactionGraph(transactions) {
 function Node(id) {
   //Main attributes
   this.id = id;
-  this.label = id;
+  // this.label = id;
   //Display attributes
-  x = Math.random();
-  y = Math.random();
+  this.x = Math.random();
+  this.y = Math.random();
   this.size = 1;
   this.color = '#f00';
 }
@@ -63,7 +63,7 @@ function Edge(id, source, target){
   this.source = source;
   this.target = target;
   //Display attributes
-  this.size = Math.random;
+  this.size = Math.random();
   this.color = '#ccc';
   this.type = 'arrow';
 }
