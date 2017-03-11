@@ -1,68 +1,58 @@
+var nodes = [];
+var edges = [];
+
 function TransactionGraph(transactions) {
-  this.nodes = [];
-  this.edges = [];
+  transactionGraph(transactions);
+  console.log('Edges length: ' + edges.length);
+  console.log('Nodes length: ' + nodes.length);
+  this.nodes = nodes;
+  this.edges = edges;
+}
 
+function transactionGraph(transactions) {
   for (var i = 0; i < transactions.length; i++) {
-    var sender = transactions[i].from;
-    var reciever = transactions[i].to;
-    var transactionHash = transactions[i].hash;
+    processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash);
+  }
+}
 
-    //When the sender and reciever are same
-    if (sender === reciever) {
-      if (!contains(this.nodes, sender)) {
-        //TODO: determine first whether the address is account or contract
-        this.nodes.push(new AccountNode(sender));
-      }
-      //Add the nre transaction as an edge in this.edges
-      this.edges.push(new Edge(transactionHash, sender, reciever));
-    } else {
-      //When both sender and reciever are already in this.nodes
-      if (contains(this.nodes, sender) && contains(this.nodes, reciever)){
-        //Only add a directed edge between the nodes
-        this.edges.push(new Edge(transactionHash, sender, reciever));
-      }
-      //When sender is not in this.nodes but reciever is
-      else if (!contains(this.nodes, sender) && contains(this.nodes, reciever)) {
-        //Add sender to this.nodes
-        this.nodes.push(new AccountNode(sender));
-        //Create a new edge between sender and reciever
-        this.edges.push(new Edge(transactionHash, sender, reciever));
-      }
-      //When reciever is not in this.nodes but sender is
-      else if (!contains(this.nodes, reciever) && contains(this.nodes, sender)) {
-        //Check if transaction is contract creation, since reciever == null
-        if (reciever == null) {
-          reciever = web3.eth.getTransactionReceipt(transactionHash).contractAddress;
-          //Creation contract transaction
-          this.edges.push(new ContractCreationEdge(transactionHash, sender, reciever));
-          //Add reciever to this.nodes
-          this.nodes.push(new ContractNode(reciever));
-        } else {
-          //Create a new edge between sender and reciever
-          this.edges.push(new Edge(transactionHash, sender, reciever));
-          //Add reciever to this.nodes
-          this.nodes.push(new ContractNode(reciever));
-        }
-      }
-      //When both sender and reciever are not in this.nodes
-      else if (!contains(this.nodes, reciever) && !contains(this.nodes, sender)) {
-        //Add both sender and reciever to this.nodes
-        this.nodes.push(new AccountNode(sender));
-        //But first check if transaction is contract creation, since reciever == null
-        if (reciever == null) {
-          reciever = web3.eth.getTransactionReceipt(transactionHash).contractAddress;
-          //Creation contract transaction
-          this.edges.push(new ContractCreationEdge(transactionHash, sender, reciever));
-          //Add reciever to this.nodes
-          this.nodes.push(new ContractNode(reciever));
-        } else {
-          //Create a new edge between sender and reciever
-          this.edges.push(new Edge(transactionHash, sender, reciever));
-          //Add reciever to this.nodes
-          this.nodes.push(new ContractNode(reciever));
-        }
-      }
+function processTransaction(sender, reciever, transactionHash) {
+  //At the start determine whether sender and reciever are in nodes
+  var senderInNodes = contains(nodes, sender);
+  var recieverInNodes = contains(nodes, reciever);
+  //When the sender and reciever are same
+  if (sender.address === reciever.address) {
+    if (!senderInNodes) nodes.push(createNode(sender));
+  } else {
+    //When both sender and reciever are not in nodes
+    if (!senderInNodes && !recieverInNodes) {
+      //Add both sender and reciever to nodes
+      nodes.push(createNode(sender));
+      nodes.push(createNode(reciever));
     }
+    //Either sender or reciever is in nodes
+    else {
+      //If sender is not in nodes then add sender and vise versa
+      if (!senderInNodes && recieverInNodes) nodes.push(createNode(sender));
+      if (!recieverInNodes && senderInNodes) nodes.push(createNode(reciever));
+    }
+  }
+  //Always need to create an edge between nodes
+  edges.push(createEdge(transactionHash, sender, reciever));
+}
+
+function createNode(senderOrReciever) {
+  if (senderOrReciever.isContract) {
+    return new ContractNode(senderOrReciever.address);
+  } else {
+    return new AccountNode(senderOrReciever.address);
+  }
+}
+
+function createEdge(transactionHash, sender, reciever) {
+  if (reciever.isContract && reciever.new) {
+    return new ContractCreationEdge(transactionHash, sender.address, reciever.address);
+  } else {
+    return new Edge(transactionHash, sender.address, reciever.address);
   }
 }
 
@@ -95,7 +85,6 @@ function Edge(id, source, target){
   this.id = id;
   this.source = source;
   this.target = target;
-  this.size = Math.random();
   this.color = '#3f5e4d';
   this.type = 'arrow';
 }
@@ -104,17 +93,42 @@ function ContractCreationEdge(id, source, target) {
   this.id = id;
   this.source = source;
   this.target = target;
-  this.size = Math.random();
   this.color = '#80b6ad';
   this.type = 'arrow';
 }
 
-function contains(list, item) {
+function contains(list, senderOrReciever) {
   for (var i=0; i < list.length; i++) {
     var listId = list[i].id;
-    if (listId === item){
+    if (listId === senderOrReciever.address){
       return true;
     }
   }
   return false;
 }
+
+//////////////////////
+////DEBUGGING CODE////
+//////////////////////
+
+/**
+
+var ancList = [];
+for (var i = 0; i<nodes.length; i++) {
+	ancList.push(nodes[i].id);
+}
+
+var sorted_arr = ancList.slice().sort();
+
+var results = [];
+var dupListIndex = [];
+for (var i = 0; i < ancList.length - 1; i++) {
+    if (sorted_arr[i + 1] == sorted_arr[i]) {
+		dupListIndex.push(i)
+        results.push(sorted_arr[i]);
+    }
+}
+console.log(results);
+console.log(dupListIndex);
+
+**/

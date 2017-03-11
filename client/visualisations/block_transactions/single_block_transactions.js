@@ -5,8 +5,10 @@ var blockUrl = "http://127.0.0.1:3000/api/block";
 var blockNumberOrHash = 3320787;
 // var blockNumberOrHash = 3327346;
 // var blockNumberOrHash = 3329340;
+// var blockNumberOrHash = 2740710;
+// var blockNumberOrHash = 3330615;
 
-var url = blockUrl + '/' + blockNumberOrHash + '/transactions';
+var url = blockUrl + '/' + blockNumberOrHash + '/WithTransactionsAndAccounts';
 
 http.get(url, function(res, err) {
   if (res != null) {
@@ -26,10 +28,12 @@ function createGraph(transactions) {
     graph: g,
     container: 'container',
     settings: {
-    minNodeSize: 4,
-    maxNodeSize: 2,
+    minNodeSize: 1,
+    maxNodeSize: 1.5,
     minEdgeSize: 1,
-    maxEdgeSize: 1
+    maxEdgeSize: 3,
+    scalingMode: "inside",
+    sideMargin: 20
   }
   })
   //Start Force Atlas algorithm
