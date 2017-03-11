@@ -19,7 +19,34 @@ router.get('/:id/WithTransactionsAndAccounts', function(req, res) {
 })
 
 //Return multiple block according to the count requested.
-router.get('/:id/WithTransactionsAndAccounts', function(req, res) {
+router.get('/:id/WithTransactionsAndAccounts/:count', function(req, res) {
+  var count = req.params.count;
+  var block = web3.eth.getBlock(req.params.id, true);
+
+  var totalTransactions = 0;
+
+  var blocks = [];
+  var allTransactions = [];
+
+  for (var i = count; i > 0; i--) {
+    console.log();
+    console.log('Block number: ' + block.number + ' and i: ' + i);
+    console.log();
+
+    block = updateBlock(block);
+    blocks.push(block);
+
+    totalTransactions = totalTransactions + (block.transactions).length;
+    allTransactions.push(block.transactions);
+    block = web3.eth.getBlock(block.parentHash, true);
+  }
+
+  allTransactions = [].concat.apply([], allTransactions);
+
+  console.log("totalTransactions: " + totalTransactions);
+  console.log("allTransactions: "+ allTransactions.length);
+
+  res.json({blocks: blocks, allTransactions:allTransactions});
   console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
 })
 
