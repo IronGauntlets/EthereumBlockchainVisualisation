@@ -1,8 +1,9 @@
 {
   "name": "ethereum-blockchain-visualisation",
   "version": "0.1.0",
+  "private": true,
   "description": "Visualising Ethereum Blockchain",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
