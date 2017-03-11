@@ -6,8 +6,8 @@ var Account = require('../models/account.js');
 router.get('/:id', function(req, res) {
   var accountAddress = req.params.id;
   var account = new Account(accountAddress);
-  console.log(account);
   res.json(account);
+  console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
 });
 
 module.exports = router;
