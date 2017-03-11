@@ -40,12 +40,17 @@ function updateTransaction(transaction) {
 
   //When a transaction is a contract creation
   if (transaction.to == null) {
-    transaction.contractAddress = web3.eth.getTransactionReceipt(transaction.hash).contractAddress;
-    newReciever.address = null;
+    newReciever.address = web3.eth.getTransactionReceipt(transaction.hash).contractAddress;
     newReciever.isContract = true;
+    newReciever.new = true;
   } else {
     newReciever.address = transaction.to;
-    newReciever.isContract = isContract(newReciever.address);
+
+    var contract = isContract(newReciever.address);
+    if (contract) {
+      newReciever.new = false;
+    }
+    newReciever.isContract = contract;
   }
 
   transaction.from = newSender;

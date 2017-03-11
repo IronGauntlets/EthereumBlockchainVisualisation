@@ -1,6 +1,9 @@
 const express = require('express');
 const app  = express();
 
+//Command for starting the server, however need to think abour corsdomain
+//geth --nodiscover --rpc --rpccorsdomain="http://localhost:8545"
+
 //Gobal web3JS object to communicate with the blockchain
 const Web3 = require('web3');
 web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
