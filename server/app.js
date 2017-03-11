@@ -11,14 +11,13 @@ web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 
 const apiPrefix = 'api';
 
-//When running locally//
-// For working locally, will need to disable once running on dedicated server
-// app.use(function(req, res, next) {
-//   res.header('Access-Control-Allow-Origin', '*');
-//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-//   res.header('Access-Control-Allow-Headers', 'Content-Type');
-//   next();
-// })
+// CORS Support
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+})
 
 // Middleware for logging requests
 app.use(function(req, res, next){
