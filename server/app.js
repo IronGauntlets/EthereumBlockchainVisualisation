@@ -1,5 +1,6 @@
 const express = require('express');
 const app  = express();
+const vmAddr = '146.169.46.159';
 
 //Command for starting the server, however need to think abour corsdomain
 //geth --nodiscover --rpc --rpccorsdomain="http://localhost:8545"
@@ -8,15 +9,16 @@ const app  = express();
 const Web3 = require('web3');
 web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 
-const apiPrefix = 'api'
+const apiPrefix = 'api';
 
+//When running locally//
 // For working locally, will need to disable once running on dedicated server
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-})
+// app.use(function(req, res, next) {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+//   res.header('Access-Control-Allow-Headers', 'Content-Type');
+//   next();
+// })
 
 // Middleware for logging requests
 app.use(function(req, res, next){
@@ -43,8 +45,16 @@ app.use('/' + apiPrefix + '/transaction', transaction);
 const blockchain = require('./controllers/blockchain.js');
 app.use('/' + apiPrefix + '/blockchain', blockchain);
 
-//Start listening
-var server = app.listen(3000, 'localhost', function(){
+//Start listening when running on local node
+// var server = app.listen(3000, 'localhost', function(){
+//   var host = server.address().address;
+//   var port = server.address().port;
+//
+//   console.log('Example app listening at http://%s:%s', host, port);
+// });
+
+//Start listening when running on VM
+var server = app.listen(3000, vmAddr, function(){
   var host = server.address().address;
   var port = server.address().port;
 
