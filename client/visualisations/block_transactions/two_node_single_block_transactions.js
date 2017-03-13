@@ -1,5 +1,5 @@
-var blockUrl = "http://127.0.0.1:3000/api/block";
-// var blockUrl = "http://146.169.46.159:3000/api/block"; //When running on vm
+//var blockUrl = "http://127.0.0.1:3000/api/block";
+ var blockUrl = "http://146.169.46.159:3000/api/block"; //When running on vm
 
 // var blockNumberOrHash = 3320744;
 // var blockNumberOrHash = 3312599;

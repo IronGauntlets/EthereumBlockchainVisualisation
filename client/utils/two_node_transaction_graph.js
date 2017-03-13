@@ -69,7 +69,7 @@ function AccountNode(id) {
   this.id = id;
   this.x = Math.random();
   this.y = Math.random();
-  this.size = 3;
+  this.size = 1;
   this.color = '#04c975';
 }
 
@@ -77,7 +77,7 @@ function ContractNode(id) {
   this.id = id;
   this.x = Math.random();
   this.y = Math.random();
-  this.size = 3;
+  this.size = 1;
   this.color = '#e3b93c';
 }
 
@@ -85,6 +85,14 @@ function Edge(id, source, target){
   this.id = id;
   this.source = source;
   this.target = target;
+
+  //Edge colour will be the same as nodes
+  // if (source instanceof AccountNode) {
+  //   this.color = '#04c975';
+  // } else if (source instanceof ContractNode) {
+  //   this.color = '#e3b93c';
+  // }
+
   this.color = '#3f5e4d';
   this.type = 'arrow';
 }
