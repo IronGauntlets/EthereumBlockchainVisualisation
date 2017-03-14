@@ -1,0 +1,15 @@
+{
+  "name": "ethereum-blockchain-visualisation-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Client side for visualing Ethereum blockchain",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Aneeque Safdar",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.15.2"
+  }
+}

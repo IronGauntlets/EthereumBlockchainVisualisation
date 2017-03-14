@@ -1,6 +1,8 @@
 # Logs
 *.log
 server/logs
+client/logs
 
 # Dependency directories
 server/node_modules/
+client/node_modules/
