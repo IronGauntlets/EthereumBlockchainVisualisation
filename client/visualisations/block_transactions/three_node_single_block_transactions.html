@@ -25,7 +25,7 @@
   <script type="text/javascript" src='../../utils/external_libs/sigmajs/plugins/sigma.layout.forceAtlas2.min.js'></script>
   <script type="text/javascript" src='../../utils/external_libs/bignumber.min.js'></script>
   <script type="text/javascript" src='../../utils/http.js'></script>
-  <script type="text/javascript" src='../../utils/two_node_transaction_graph.js'></script>
+  <script type="text/javascript" src='../../utils/three_node_transaction_graph.js'></script>
   <script type="text/javascript">
   //Example blocks
   // var blockNumberOrHash = 3320744;
@@ -39,25 +39,24 @@
 
   var paths = window.location.pathname.split('/');
   var blockNumberOrHash = paths[2];
-  var count = paths[3];
 
   //var blockUrl = "http://127.0.0.1:3000/api/block"; //When running locally
   var blockUrl = "http://146.169.46.159:3000/api/block"; //When running on vm
 
-  var url = blockUrl + '/' + blockNumberOrHash + '/WithTransactionsAndAccounts' + '/' + count;
+  var url = blockUrl + '/' + blockNumberOrHash + '/WithTransactionsAndAccounts';
 
   http.get(url, function(res, err) {
     if (res != null) {
-      var blocks = JSON.parse(res);
-      var blocksTransactions = blocks.allTransactions;
-      createGraph(blocksTransactions, 'container');
+      var block = JSON.parse(res);
+      var blockTransactions = block.transactions;
+      createGraph(blockTransactions, 'container');
     } else {
       console.error('GET ERROR: ' + err);
     }
-  })
+  });
 
   function createGraph(transactions, container) {
-    var g = new TwoNodeTransactionGraph(transactions);
+    var g = new ThreeNodeTransactionGraph(transactions);
 
     var graphSettings = {
       minNodeSize: 1,

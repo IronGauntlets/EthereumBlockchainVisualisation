@@ -1,42 +1,37 @@
 var nodes = [];
 var edges = [];
 
-function TransactionGraph(transactions) {
-  transactionGraph(transactions);
+function TwoNodeTransactionGraph(transactions) {
+  twoNodeTransactionGraph(transactions);
   console.log('Edges length: ' + edges.length);
   console.log('Nodes length: ' + nodes.length);
   this.nodes = nodes;
   this.edges = edges;
 }
 
-function transactionGraph(transactions) {
+function twoNodeTransactionGraph(transactions) {
   for (var i = 0; i < transactions.length; i++) {
     processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash);
   }
 }
 
 function processTransaction(sender, reciever, transactionHash) {
-  //At the start determine whether sender and reciever are in nodes
   var senderInNodes = contains(nodes, sender);
   var recieverInNodes = contains(nodes, reciever);
-  //When the sender and reciever are same
+
   if (sender.address === reciever.address) {
     if (!senderInNodes) nodes.push(createNode(sender));
-  } else {
-    //When both sender and reciever are not in nodes
+  }
+  else {
     if (!senderInNodes && !recieverInNodes) {
-      //Add both sender and reciever to nodes
       nodes.push(createNode(sender));
       nodes.push(createNode(reciever));
     }
-    //Either sender or reciever is in nodes
     else {
-      //If sender is not in nodes then add sender and vise versa
       if (!senderInNodes && recieverInNodes) nodes.push(createNode(sender));
       if (!recieverInNodes && senderInNodes) nodes.push(createNode(reciever));
     }
   }
-  //Always need to create an edge between nodes
   edges.push(createEdge(transactionHash, sender, reciever));
 }
 
@@ -114,29 +109,3 @@ function contains(list, senderOrReciever) {
   }
   return false;
 }
-
-//////////////////////
-////DEBUGGING CODE////
-//////////////////////
-
-/**
-
-var ancList = [];
-for (var i = 0; i<nodes.length; i++) {
-	ancList.push(nodes[i].id);
-}
-
-var sorted_arr = ancList.slice().sort();
-
-var results = [];
-var dupListIndex = [];
-for (var i = 0; i < ancList.length - 1; i++) {
-    if (sorted_arr[i + 1] == sorted_arr[i]) {
-		dupListIndex.push(i)
-        results.push(sorted_arr[i]);
-    }
-}
-console.log(results);
-console.log(dupListIndex);
-
-**/
