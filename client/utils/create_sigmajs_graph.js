@@ -1,5 +1,5 @@
 function createGraph(transactions, container) {
-  var g = new TransactionGraph(transactions);
+  var g = new ThreeNodeTransactionGraph(transactions);
 
   var graphSettings = {
     minNodeSize: 1,
@@ -13,8 +13,8 @@ function createGraph(transactions, container) {
   var forceConfig = {
     worker: true,
     barnesHutOptimize: true,
-    // gravity: 18,
-    strongGravityMode:true,
+    gravity: 15,
+    // strongGravityMode:true,
     slowDown: 50
   }
 
