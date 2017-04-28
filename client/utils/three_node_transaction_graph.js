@@ -1,38 +1,60 @@
 var nodes = [];
 var edges = [];
 
-function TwoNodeTransactionGraph(transactions) {
-  twoNodeTransactionGraph(transactions);
+var edgeCount = 0;
+
+function ThreeNodeTransactionGraph(transactions) {
+  threeNodeTransactionGraph(transactions);
   console.log('Edges length: ' + edges.length);
   console.log('Nodes length: ' + nodes.length);
   this.nodes = nodes;
   this.edges = edges;
 }
 
-function twoNodeTransactionGraph(transactions) {
+function threeNodeTransactionGraph(transactions) {
   for (var i = 0; i < transactions.length; i++) {
-    processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash);
+    processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash)
   }
 }
 
 function processTransaction(sender, reciever, transactionHash) {
+  // Determine whether the sender and reciever are already in nodes
   var senderInNodes = contains(nodes, sender);
   var recieverInNodes = contains(nodes, reciever);
-
+  // When both the sender and reciever are same
   if (sender.address === reciever.address) {
     if (!senderInNodes) nodes.push(createNode(sender));
-  }
-  else {
+  }  else {
+    //When both sender and reciever are not in nodes
     if (!senderInNodes && !recieverInNodes) {
+      //Add both sender and reciever to nodes
       nodes.push(createNode(sender));
       nodes.push(createNode(reciever));
     }
+    //Either sender or reciever is in nodes
     else {
+      //If sender is not in nodes then add sender and vise versa
       if (!senderInNodes && recieverInNodes) nodes.push(createNode(sender));
       if (!recieverInNodes && senderInNodes) nodes.push(createNode(reciever));
     }
   }
-  edges.push(createEdge(transactionHash, sender, reciever));
+  //Always create the transaction node and edges between the transaction and sender and reciever
+  nodes.push(new TransactionNode(transactionHash));
+  createEdges(transactionHash, sender, reciever);
+}
+
+function createEdges(transactionHash, sender, reciever) {
+  if (reciever.isContract && reciever.new) {
+    edges.push(new ContractCreationEdge(edgeCount, sender.address, transactionHash));
+    edgeCount++;
+    edges.push(new ContractCreationEdge(edgeCount, transactionHash, reciever.address));
+    edgeCount++;
+  } else {
+    edges.push(new Edge(edgeCount, sender.address, transactionHash));
+    edgeCount++;
+    edges.push(new Edge(edgeCount, transactionHash, reciever.address));
+    edgeCount++;
+  }
 }
 
 function createNode(senderOrReciever) {
@@ -43,22 +65,13 @@ function createNode(senderOrReciever) {
   }
 }
 
-function createEdge(transactionHash, sender, reciever) {
-  if (reciever.isContract && reciever.new) {
-    return new ContractCreationEdge(transactionHash, sender.address, reciever.address);
-  } else {
-    return new Edge(transactionHash, sender.address, reciever.address);
-  }
+function TransactionNode(hash) {
+  this.id = hash;
+  this.x = Math.random();
+  this.y = Math.random();
+  this.size = 1;
+  this.color = '#1b7a91';
 }
-
-// Colours:
-// light green:#89c149
-// musk yellow: #e3b93c
-// bright green: #04c975
-// aqua blue: #1b7a91
-// aqua:#80b6ad
-// light grey: #3f5e4d
-//
 
 function AccountNode(id) {
   this.id = id;
@@ -80,14 +93,6 @@ function Edge(id, source, target){
   this.id = id;
   this.source = source;
   this.target = target;
-
-  //Edge colour will be the same as nodes
-  // if (source instanceof AccountNode) {
-  //   this.color = '#04c975';
-  // } else if (source instanceof ContractNode) {
-  //   this.color = '#e3b93c';
-  // }
-
   this.color = '#3f5e4d';
   this.type = 'arrow';
 }

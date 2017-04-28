@@ -25,7 +25,7 @@
   <script type="text/javascript" src='../../utils/external_libs/sigmajs/plugins/sigma.layout.forceAtlas2.min.js'></script>
   <script type="text/javascript" src='../../utils/external_libs/bignumber.min.js'></script>
   <script type="text/javascript" src='../../utils/http.js'></script>
-  <script type="text/javascript" src='../../utils/two_node_transaction_graph.js'></script>
+  <script type="text/javascript" src='../../utils/three_node_transaction_graph.js'></script>
   <script type="text/javascript">
   //Example blocks
   // var blockNumberOrHash = 3320744;
@@ -57,7 +57,7 @@
   })
 
   function createGraph(transactions, container) {
-    var g = new TwoNodeTransactionGraph(transactions);
+    var g = new ThreeNodeTransactionGraph(transactions);
 
     var graphSettings = {
       minNodeSize: 1,
