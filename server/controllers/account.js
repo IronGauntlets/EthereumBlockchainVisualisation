@@ -3,6 +3,7 @@ const router = express.Router();
 
 var Account = require('../models/account.js');
 
+// Return Account details for given id
 router.get('/:id', function(req, res) {
   var accountAddress = req.params.id;
   var account = new Account(accountAddress);

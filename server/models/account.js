@@ -1,23 +1,46 @@
 function Account(address) {
-  this.address = address;                                                          //address of the account
-  this.transactionCount = web3.eth.getTransactionCount(this.address);              //nonce required to keep track of transactions from this account
+  this.address = address;
 
-  //NOTE: Javascript doesn't natively handle big numbers very well, hence a sting is returned
-  this.balance = web3.eth.getBalance(this.address).toString(10);                   //Ether/wei associated with the account
+  //Populate the below fields as necessary
+  this.code;
+  this.isContract;
+  this.transactionCount;
+  this.balance;
+  this.transactions;
+}
 
-  //Get Contract code and set whether the account is contract or not
-  this.code = web3.eth.getCode(this.address);
+//Number of trasactions in the given block
+Account.prototype.getTransactionCount = function(blockNumber) {
+  this.transactionCount = {
+    transactionCount: web3.eth.getTransactionCount(this.address, blockNumber),
+    blockNumber: blockNumber
+  }
+  return this.transactionCount;
+}
 
-  this.isContract = true;                                                         //Check whether the account is contract or not
-  if (this.code === '0x') {
+// Account's balance in a given block
+Account.prototype.getBalance = function(blockNumber) {
+  //Javascript doesn't natively handle big numbers very well, hence a sting is returned
+  this.balance = {
+    balance: web3.eth.getBalance(this.address, blockNumber).toString(10),
+    blockNumber: blockNumber
+  }
+  return this.balance;
+}
+
+// Account' code given a block
+Account.prototype.getCode = function(blockNumber) {
+  this.code = {
+    code: web3.eth.getCode(this.address, blockNumber),
+    blockNumber: blockNumber
+  }
+  this.isContract = true;
+
+  if (this.code.code === '0x') {
     this.isContract = false;
   }
 
-  //Populate the below fields as necessary
-  this.storageRoot = null;                                                         //account's persistent storage (may not be feasible)
-  this.transactions = null;                                                        //transactions sent by this account
+  return this.code;
 }
-
-// TODO: Use prototype to add functions to Account if needed
 
 module.exports = Account;

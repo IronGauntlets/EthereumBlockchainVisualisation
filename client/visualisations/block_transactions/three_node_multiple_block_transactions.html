@@ -25,18 +25,7 @@
   <script type="text/javascript" src='../../utils/external_libs/sigmajs/plugins/sigma.layout.forceAtlas2.min.js'></script>
   <script type="text/javascript" src='../../utils/external_libs/bignumber.min.js'></script>
   <script type="text/javascript" src='../../utils/http.js'></script>
-  <script type="text/javascript" src='../../utils/three_node_transaction_graph.js'></script>
   <script type="text/javascript">
-  //Example blocks
-  // var blockNumberOrHash = 3320744;
-  // var blockNumberOrHash = 3312599;
-  // var blockNumberOrHash = 3320787;
-  // var blockNumberOrHash = 3327346;
-  // var blockNumberOrHash = 3329340;
-  // var blockNumberOrHash = 2740710;
-  // var blockNumberOrHash = 3330615;
-  // var blockNumberOrHash = 3347713;
-
   var paths = window.location.pathname.split('/');
   var blockNumberOrHash = paths[2];
   var count = paths[3];
@@ -48,17 +37,14 @@
 
   http.get(url, function(res, err) {
     if (res != null) {
-      var blocks = JSON.parse(res);
-      var blocksTransactions = blocks.allTransactions;
-      createGraph(blocksTransactions, 'container');
+      var graph = JSON.parse(res);
+      createGraph(graph, 'container');
     } else {
       console.error('GET ERROR: ' + err);
     }
   })
 
-  function createGraph(transactions, container) {
-    var g = new ThreeNodeTransactionGraph(transactions);
-
+  function createGraph(g, container) {
     var graphSettings = {
       minNodeSize: 1,
       maxNodeSize: 2,
