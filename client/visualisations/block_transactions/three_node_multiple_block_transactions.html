@@ -33,7 +33,7 @@
   //var blockUrl = "http://127.0.0.1:3000/api/block"; //When running locally
   var blockUrl = "http://146.169.46.159:3000/api/block"; //When running on vm
 
-  var url = blockUrl + '/' + blockNumberOrHash + '/WithTransactionsAndAccounts' + '/' + count;
+  var url = blockUrl + '/' + blockNumberOrHash + '/three_node' + '/' + count;
 
   http.get(url, function(res, err) {
     if (res != null) {
