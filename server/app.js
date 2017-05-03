@@ -44,7 +44,7 @@ app.use('/' + apiPrefix + '/transaction', transaction);
 const blockchain = require('./controllers/blockchain.js');
 app.use('/' + apiPrefix + '/blockchain', blockchain);
 
-//Start listening when running on local node
+// //Start listening when running on local node
 // var server = app.listen(3000, 'localhost', function(){
 //   var host = server.address().address;
 //   var port = server.address().port;
