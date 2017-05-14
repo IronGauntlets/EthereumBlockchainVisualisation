@@ -1,6 +1,6 @@
-const express = require('express');
-const path = require('path');
-const app  = express();
+const express = require('express')
+const path = require('path')
+const app  = express()
 const vmAddr = '146.169.46.159';
 
 // CORS Support
@@ -52,7 +52,7 @@ app.get('/three_node_multiple_block_transactions/:id/:count', function (req, res
   res.sendFile(path.join(__dirname+'/visualisations/block_transactions/three_node_multiple_block_transactions.html'))
 })
 
-//Start listening when running on local node
+// // Start listening when running on local node
 // var server = app.listen(8000, 'localhost', function(){
 //   var host = server.address().address;
 //   var port = server.address().port;

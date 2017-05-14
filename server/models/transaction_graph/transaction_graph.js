@@ -1,5 +1,5 @@
-var Edges = require('./edge.js');
-var Nodes = require('./node.js');
+const Edges = require('./edge.js');
+const Nodes = require('./node.js');
 
 // Base class for creating different graphs
 function TransactionGraph() {

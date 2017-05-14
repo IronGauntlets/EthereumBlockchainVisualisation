@@ -1,6 +1,6 @@
-var TransactionGraph = require('./transaction_graph.js');
-var Edges = require('./edge.js');
-var Nodes = require('./node.js');
+const TransactionGraph = require('./transaction_graph.js');
+const Edges = require('./edge.js');
+const Nodes = require('./node.js');
 
 // Subclass for transaction graph
 function TwoNodeTransactionGraph() {
