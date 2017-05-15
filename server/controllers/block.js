@@ -1,9 +1,9 @@
 const express  = require('express');
 const router = express.Router();
 
-var Account = require('../models/account.js');
-var TwoNodeTransactionGraph = require('../models/transaction_graph/two_node_transaction_graph.js');
-var ThreeNodeTransactionGraph = require('../models/transaction_graph/three_node_transaction_graph.js');
+const Account = require('../models/account.js')
+const TwoNodeTransactionGraph = require('../models/transaction_graph/two_node_transaction_graph.js');
+const ThreeNodeTransactionGraph = require('../models/transaction_graph/three_node_transaction_graph.js');
 
 //Return block as acquired from web3js with transaction objects for two node
 router.get('/:id/two_node', function(req, res) {
@@ -16,7 +16,7 @@ router.get('/:id/two_node', function(req, res) {
 //Return block as acquired from web3js with transaction objects for three node
 router.get('/:id/three_node', function(req, res) {
   var threeNodeGraph = new ThreeNodeTransactionGraph();
-  proceesSingleBlock(req.params.id, threeNodeGraph);
+  processSingleBlock(req.params.id, threeNodeGraph);
   //Delete the edgeCount property
   delete threeNodeGraph.edgeCount;
   res.json(threeNodeGraph);
@@ -40,7 +40,7 @@ router.get('/:id/three_node/:count', function(req, res) {
   console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
 })
 
-function proceesSingleBlock(blockID, graph) {
+function processSingleBlock(blockID, graph) {
   var block = web3.eth.getBlock(blockID, true);
   updateBlock(block, graph);
 }

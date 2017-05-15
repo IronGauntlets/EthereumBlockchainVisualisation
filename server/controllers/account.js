@@ -1,7 +1,7 @@
 const express  = require('express');
 const router = express.Router();
 
-var Account = require('../models/account.js');
+const Account = require('../models/account.js');
 
 // Return Account details for given id
 router.get('/:id', function(req, res) {
