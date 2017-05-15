@@ -9,8 +9,11 @@ const mongoClient = require('mongodb').MongoClient;
 const Web3 = require('web3');
 web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 
-const vmAddr = '146.169.46.159';
 const apiPrefix = 'api';
+const vmAddr = '146.169.46.159';
+const dbName = 'ethereum_blockchain';
+const mongoURL = 'mongodb://' + vmAddr +':27017/' + dbName;
+// const mongoURL = 'mongodb://localhost:27017/' + dbName;
 
 // CORS Support
 app.use(function(req, res, next) {
