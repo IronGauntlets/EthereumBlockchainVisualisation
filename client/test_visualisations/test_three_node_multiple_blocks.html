@@ -26,7 +26,6 @@
   <script type="text/javascript" src='../utils/external_libs/bignumber.min.js'></script>
   <script type="text/javascript" src='../utils/http.js'></script>
   <script type="text/javascript" src='/test_visualisations/100_blocks_three_node.json'></script>
-  <!-- <script type="text/javascript" src='./100_blocks_three_node.json'></script> -->
   <script type="text/javascript">
   var path = window.location.pathname.split('/');
   console.log(path);
@@ -43,10 +42,10 @@
 
     var forceConfig = {
       worker: true,
-      barnesHutOptimize: true,
-      gravity: 10,
+      // barnesHutOptimize: true,
+      gravity: 5,
       // strongGravityMode:true,
-      // slowDown: 50
+      slowDown: 20
     }
 
     var s = new sigma({
@@ -60,6 +59,7 @@
       s.stopForceAtlas2();
     },120000);
   }
+
   </script>
 </body>
 </html>

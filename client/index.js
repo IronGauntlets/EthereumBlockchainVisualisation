@@ -1,7 +1,6 @@
-const express = require('express')
-const path = require('path')
-const app  = express()
-const vmAddr = '146.169.46.159';
+const express = require('express');
+const path = require('path');
+const app  = express();
 
 // CORS Support
 app.use(function(req, res, next) {
@@ -21,6 +20,11 @@ app.use(function(req, res, next){
 // Send files for these requests and for testing visualisations
 app.use("/utils", express.static(path.join(__dirname + '/utils')));
 app.use("/test_visualisations", express.static(path.join(__dirname + '/test_visualisations')));
+
+// Send favicon
+app.get('/favicon.ico', function (req, res) {
+  res.sendFile(path.join(__dirname+'/favicon.ico'));
+});
 
 // Test two node visualisation that has been stored locally
 app.get('/test_three_node_multiple_blocks', function (req, res) {
@@ -52,16 +56,8 @@ app.get('/three_node_multiple_block_transactions/:id/:count', function (req, res
   res.sendFile(path.join(__dirname+'/visualisations/block_transactions/three_node_multiple_block_transactions.html'))
 })
 
-// // Start listening when running on local node
-// var server = app.listen(8000, 'localhost', function(){
-//   var host = server.address().address;
-//   var port = server.address().port;
-//
-//   console.log('Example app listening at http://%s:%s', host, port);
-// });
-
-//Start listening when running on VM
-var server = app.listen(8000, vmAddr, function(){
+// Start listening when running on local node
+var server = app.listen(8000, 'localhost', function(){
   var host = server.address().address;
   var port = server.address().port;
 
