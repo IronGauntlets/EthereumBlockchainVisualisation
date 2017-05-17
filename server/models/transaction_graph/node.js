@@ -16,8 +16,8 @@ function Node(id) {
 
 function AccountNode(id) {
   Node.call(this, id)
-  this.color = '#3f5e4d';
-  // this.color = '#04c975';
+  // this.color = '#3f5e4d';
+  this.color = '#04c975';
 }
 
 function ContractNode(id) {

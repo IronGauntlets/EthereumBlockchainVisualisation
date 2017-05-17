@@ -10,8 +10,8 @@ function TwoNodeTransactionGraph() {
 TwoNodeTransactionGraph.prototype = Object.create(TransactionGraph.prototype);
 TwoNodeTransactionGraph.prototype.constructor = TwoNodeTransactionGraph;
 
-TwoNodeTransactionGraph.prototype.processTrasaction = function(sender, reciever, transactionHash, isNew) {
-  TransactionGraph.prototype.processTrasaction.call(this, sender, reciever, transactionHash);
+TwoNodeTransactionGraph.prototype.processTransaction = function(sender, reciever, transactionHash, isNew) {
+  TransactionGraph.prototype.processTransaction.call(this, sender, reciever, transactionHash);
   this.createEdge(transactionHash, sender, reciever, isNew);
 }
 

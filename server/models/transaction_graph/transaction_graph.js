@@ -7,7 +7,7 @@ function TransactionGraph() {
   this.edges = [];
 }
 // Methods to be overridden in subclasses
-TransactionGraph.prototype.processTrasaction = function(sender, reciever, transactionHash) {
+TransactionGraph.prototype.processTransaction = function(sender, reciever, transactionHash) {
   // Determine whether the sender and reciever are already in nodes
   var senderInNodes = this.contains(this.nodes, sender);
   var recieverInNodes = this.contains(this.nodes, reciever);
