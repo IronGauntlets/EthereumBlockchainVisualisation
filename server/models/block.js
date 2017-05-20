@@ -34,6 +34,7 @@ function getBlock(id, callback) {
               else {
                 console.log('Successfully inserted the Block ' + block.number + ' in MongoDB');
                 db.close();
+                console.log('Closed MongoDB connection');
                 callback(r.ops[0]);
               }
             })

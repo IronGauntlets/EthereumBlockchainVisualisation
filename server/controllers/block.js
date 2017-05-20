@@ -54,16 +54,16 @@ function processSingleBlock(blockID, graph, callback) {
 }
 
 function processMultipleBlocks(blockID, count, graph, callback) {
-  Block.getBlock(blockID, (block) => {
-    if (count > 0){
+  if (count > 0) {
+    Block.getBlock(blockID, (block) => {
       console.log();
       console.log('Block number: ' + block.number + ' and count: ' + count);
       processTransactionsToGraph(block.transactions, graph);
       processMultipleBlocks(block.parentHash, count-1, graph, callback);
-    } else {
-      callback();
-    }
-  })
+    })
+  } else {
+    callback();
+  }
 }
 
 function processTransactionsToGraph(transactions, graph) {
