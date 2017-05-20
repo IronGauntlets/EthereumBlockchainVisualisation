@@ -8,53 +8,62 @@ const ThreeNodeTransactionGraph = require('../models/transaction_graph/three_nod
 //Return block as acquired from web3js with transaction objects for two node
 router.get('/:id/two_node', function(req, res) {
   var twoNodeGraph = new TwoNodeTransactionGraph();
-  processSingleBlock(req.params.id, twoNodeGraph);
-  res.json(twoNodeGraph);
-  console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
+  processSingleBlock(req.params.id, twoNodeGraph, () => {
+    res.json(twoNodeGraph);
+    console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
+  });
 })
 
 //Return block as acquired from web3js with transaction objects for three node
 router.get('/:id/three_node', function(req, res) {
   var threeNodeGraph = new ThreeNodeTransactionGraph();
-  processSingleBlock(req.params.id, threeNodeGraph);
-  //Delete the edgeCount property
-  delete threeNodeGraph.edgeCount;
-  res.json(threeNodeGraph);
-  console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
+  processSingleBlock(req.params.id, threeNodeGraph, () => {
+    //Delete the edgeCount property
+    delete threeNodeGraph.edgeCount;
+    res.json(threeNodeGraph);
+    console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
+  })
 })
 
 //Return multiple block according to the count requested for two node
 router.get('/:id/two_node/:count', function(req, res) {
   var twoNodeGraph = new TwoNodeTransactionGraph();
-  processMultipleBlocks(req.params.id, req.params.count, twoNodeGraph);
-  res.json(twoNodeGraph);
-  console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
+  processMultipleBlocks(req.params.id, req.params.count, twoNodeGraph, () => {
+    res.json(twoNodeGraph);
+    console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
+  });
 })
 
 //Return multiple block according to the count requested for three node
 router.get('/:id/three_node/:count', function(req, res) {
   var threeNodeGraph = new ThreeNodeTransactionGraph();
-  processMultipleBlocks(req.params.id, req.params.count, threeNodeGraph);
-  //Delete the edgeCount property
-  delete threeNodeGraph.edgeCount;
-  res.json(threeNodeGraph);
-  console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
+  processMultipleBlocks(req.params.id, req.params.count, threeNodeGraph, () => {
+    //Delete the edgeCount property
+    delete threeNodeGraph.edgeCount;
+    res.json(threeNodeGraph);
+    console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
+  });
 })
 
-function processSingleBlock(blockID, graph) {
+function processSingleBlock(blockID, graph, callback) {
   //Get the relevant block
-  var block = Block.getBlock(blockID);
-  processTransactionsToGraph(block.transactions, graph);
+  Block.getBlock(blockID, (r) => {
+    processTransactionsToGraph(r.transactions, graph);
+    callback();
+  })
 }
 
-function processMultipleBlocks(blockID, count, graph) {
-  var block = Block.getBlock(blockID);
-  for (var i = count; i > 0; i--) {
-    console.log();
-    console.log('Block number: ' + block.number + ' and i: ' + i);
-    processTransactionsToGraph(block.transactions, graph);
-    block = Block.getBlock(block.parentHash);
-  }
+function processMultipleBlocks(blockID, count, graph, callback) {
+  Block.getBlock(blockID, (block) => {
+    if (count > 0){
+      console.log();
+      console.log('Block number: ' + block.number + ' and count: ' + count);
+      processTransactionsToGraph(block.transactions, graph);
+      processMultipleBlocks(block.parentHash, count-1, graph, callback);
+    } else {
+      callback();
+    }
+  })
 }
 
 function processTransactionsToGraph(transactions, graph) {
