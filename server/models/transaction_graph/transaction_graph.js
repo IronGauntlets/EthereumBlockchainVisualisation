@@ -5,12 +5,13 @@ const Nodes = require('./node.js');
 function TransactionGraph() {
   this.nodes = [];
   this.edges = [];
+  this.nodesHashMap = {};
 }
 // Methods to be overridden in subclasses
 TransactionGraph.prototype.processTransaction = function(sender, reciever, transactionHash) {
   // Determine whether the sender and reciever are already in nodes
-  var senderInNodes = this.contains(this.nodes, sender);
-  var recieverInNodes = this.contains(this.nodes, reciever);
+  var senderInNodes = this.contains(sender.address);
+  var recieverInNodes = this.contains(reciever.address);
   // When both the sender and reciever are same
   if (sender.address === reciever.address) {
     if (!senderInNodes) this.nodes.push(this.createNode(sender));
@@ -40,14 +41,18 @@ TransactionGraph.prototype.createNode = function(senderOrReciever) {
 }
 
 // Required to test for duplicates
-TransactionGraph.prototype.contains = function(list, senderOrReciever) {
-  for (var i=0; i < list.length; i++) {
-    var listId = list[i].id;
-    if (listId === senderOrReciever.address){
-      return true;
-    }
+TransactionGraph.prototype.contains = function(senderOrReciever) {
+  if (this.nodesHashMap.hasOwnProperty(senderOrReciever)) {
+    return true
+  } else {
+    this.nodesHashMap[senderOrReciever] = true;
+    return false
   }
-  return false;
+}
+
+// Delete unneccessary properties
+TransactionGraph.prototype.deleteProperties = function() {
+  delete this.nodesHashMap;
 }
 
 module.exports = TransactionGraph;

@@ -9,6 +9,7 @@ const ThreeNodeTransactionGraph = require('../models/transaction_graph/three_nod
 router.get('/:id/two_node', function(req, res) {
   var twoNodeGraph = new TwoNodeTransactionGraph();
   processSingleBlock(req.params.id, twoNodeGraph, () => {
+    twoNodeGraph.deleteProperties();
     res.json(twoNodeGraph);
     console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
   });
@@ -18,8 +19,7 @@ router.get('/:id/two_node', function(req, res) {
 router.get('/:id/three_node', function(req, res) {
   var threeNodeGraph = new ThreeNodeTransactionGraph();
   processSingleBlock(req.params.id, threeNodeGraph, () => {
-    //Delete the edgeCount property
-    delete threeNodeGraph.edgeCount;
+    threeNodeGraph.deleteProperties();
     res.json(threeNodeGraph);
     console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
   })
@@ -29,6 +29,7 @@ router.get('/:id/three_node', function(req, res) {
 router.get('/:id/two_node/:count', function(req, res) {
   var twoNodeGraph = new TwoNodeTransactionGraph();
   processMultipleBlocks(req.params.id, req.params.count, twoNodeGraph, () => {
+    twoNodeGraph.deleteProperties();
     res.json(twoNodeGraph);
     console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
   });
@@ -38,8 +39,7 @@ router.get('/:id/two_node/:count', function(req, res) {
 router.get('/:id/three_node/:count', function(req, res) {
   var threeNodeGraph = new ThreeNodeTransactionGraph();
   processMultipleBlocks(req.params.id, req.params.count, threeNodeGraph, () => {
-    //Delete the edgeCount property
-    delete threeNodeGraph.edgeCount;
+    threeNodeGraph.deleteProperties();
     res.json(threeNodeGraph);
     console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
   });
@@ -56,7 +56,6 @@ function processSingleBlock(blockID, graph, callback) {
 function processMultipleBlocks(blockID, count, graph, callback) {
   if (count > 0) {
     Block.getBlock(blockID, (block) => {
-      console.log();
       console.log('Block number: ' + block.number + ' and count: ' + count);
       processTransactionsToGraph(block.transactions, graph);
       processMultipleBlocks(block.parentHash, count-1, graph, callback);
@@ -67,8 +66,8 @@ function processMultipleBlocks(blockID, count, graph, callback) {
 }
 
 function processTransactionsToGraph(transactions, graph) {
+  console.log("Processing transactions");
   for (var i = 0; i < transactions.length; i++) {
-    console.log("Block Transaction: " + i);
     graph.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].isNew);
   }
 }

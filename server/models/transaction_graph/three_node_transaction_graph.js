@@ -32,4 +32,9 @@ ThreeNodeTransactionGraph.prototype.createEdges = function(hash, source, target,
   }
 }
 
+ThreeNodeTransactionGraph.prototype.deleteProperties = function() {
+  TransactionGraph.prototype.deleteProperties.call(this);
+  delete this.edgeCount;
+}
+
 module.exports = ThreeNodeTransactionGraph;
