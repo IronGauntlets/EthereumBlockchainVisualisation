@@ -45,17 +45,17 @@ router.get('/:id/three_node/:count', function(req, res) {
   });
 })
 
-function processSingleBlock(blockID, graph, callback) {
+function processSingleBlock(blockId, graph, callback) {
   //Get the relevant block
-  Block.getBlock(blockID, (r) => {
+  Block.getBlock(blockId, (r) => {
     processTransactionsToGraph(r.transactions, graph);
     callback();
   })
 }
 
-function processMultipleBlocks(blockID, count, graph, callback) {
+function processMultipleBlocks(blockId, count, graph, callback) {
   if (count > 0) {
-    Block.getBlock(blockID, (block) => {
+    Block.getBlock(blockId, (block) => {
       console.log('Block number: ' + block.number + ' and count: ' + count);
       processTransactionsToGraph(block.transactions, graph);
       processMultipleBlocks(block.parentHash, count-1, graph, callback);

@@ -25,7 +25,6 @@ function getBlock(id, callback) {
           }
           else {
             var block = web3.eth.getBlock(id, true);
-            console.log();
             console.log('Updating Block: ' + block.number);
             updateBlock(block);
             // Add the new block to MongoDB
@@ -47,20 +46,24 @@ function getBlock(id, callback) {
 }
 
 function updateBlock(block) {
+  console.log('Updating ' + block.transactions.length +  ' transactions' );
   for (var i = 0; i < block.transactions.length; i++) {
-    console.log('updating Transaction: ' + i );
     updateTransaction(block.transactions[i], block.number);
   }
 }
 
 function updateTransaction(transaction, blockNumber) {
-  transaction.isNew = false;
+  var transactionReceipt = web3.eth.getTransactionReceipt(transaction.hash);
   var newSender = new Account(transaction.from);
   var newReciever;
 
+  transaction.gasUsed = transactionReceipt.gasUsed;
+  transaction.cumulativeGasUsed = transactionReceipt.cumulativeGasUsed;
+  transaction.isNew = false;
+
   //When a transaction is a contract creation
   if (transaction.to == null) {
-    var address = web3.eth.getTransactionReceipt(transaction.hash).contractAddress;
+    var address = transactionReceipt.contractAddress;
     newReciever = new Account(address);
     transaction.isNew = true;
   } else {
