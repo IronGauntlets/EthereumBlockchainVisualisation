@@ -30,7 +30,7 @@
   var blockNumberOrHash = paths[2];
   var count = paths[3];
 
-  var blockUrl = "http://localhost:3000/api/block";
+  var blockUrl = "http://146.169.46.80:3000/api/block";
   var url = blockUrl + '/' + blockNumberOrHash + '/two_node' + '/' + count;
 
   http.get(url, function(res, err) {
