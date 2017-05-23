@@ -1,7 +1,7 @@
 const Block = require('../models/block.js');
 
-var blockNumber = 3754350;
-var startBlock = '0xdce303c8bc2d9ddd86f081235f5c0280b08005b4233bd3794afeabc88e69f0ec' //Number = 3754350
+var blockNumber = 3000000;
+var startBlock = '0xee396a86beaade9d6057b72a92b7bf5b40be4997745b437857469557b562a7c3' //Number = 3000000
 
 function populateMongoDB(startBlockId, n) {
   if (n > 0) {
