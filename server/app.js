@@ -1,19 +1,11 @@
-const express = require('express')
-const app  = express()
-const mongoClient = require('mongodb').MongoClient;
+const express = require('express');
+const app  = express();
 
 //Command for starting the server, however need to think abour corsdomain
 //geth --nodiscover --rpc --rpccorsdomain="http://localhost:8545"
-
-//Gobal web3JS object to communicate with the blockchain
-const Web3 = require('web3');
-web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+//geth --rpc --rpcaddr "146.169.46.159"  --rpcapi "eth,web3" --rpcport 8545 --networkid 4631
 
 const apiPrefix = 'api';
-const vmAddr = '146.169.46.159';
-const dbName = 'ethereum_blockchain';
-const mongoURL = 'mongodb://' + vmAddr +':27017/' + dbName;
-// const mongoURL = 'mongodb://localhost:27017/' + dbName;
 
 // CORS Support
 app.use(function(req, res, next) {
@@ -48,16 +40,8 @@ app.use('/' + apiPrefix + '/transaction', transaction);
 const blockchain = require('./controllers/blockchain.js');
 app.use('/' + apiPrefix + '/blockchain', blockchain);
 
-// //Start listening when running on local node
-// var server = app.listen(3000, 'localhost', function(){
-//   var host = server.address().address;
-//   var port = server.address().port;
-//
-//   console.log('Example app listening at http://%s:%s', host, port);
-// });
-
-//Start listening when running on VM
-var server = app.listen(3000, vmAddr, function(){
+//Start listening when running on local node
+var server = app.listen(3000, 'localhost', function(){
   var host = server.address().address;
   var port = server.address().port;
 

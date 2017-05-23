@@ -29,9 +29,7 @@
   var paths = window.location.pathname.split('/');
   var blockNumberOrHash = paths[2];
 
-  //var blockUrl = "http://127.0.0.1:3000/api/block"; //When running locally
-  var blockUrl = "http://146.169.46.159:3000/api/block"; //When running on vm
-
+  var blockUrl = "http://localhost:3000/api/block";
   var url = blockUrl + '/' + blockNumberOrHash + '/three_node';
 
   http.get(url, function(res, err) {
@@ -55,10 +53,10 @@
 
     var forceConfig = {
       worker: true,
-      barnesHutOptimize: true,
-      gravity: 15,
+      // barnesHutOptimize: true,
+      gravity: 5,
       // strongGravityMode:true,
-      slowDown: 50
+      slowDown: 20
     }
 
     var s = new sigma({
@@ -68,6 +66,9 @@
     })
     //Start Force Atlas algorithm
     s.startForceAtlas2(forceConfig);
+    setTimeout(function() {
+      s.stopForceAtlas2();
+    },120000);
   }
 
   </script>

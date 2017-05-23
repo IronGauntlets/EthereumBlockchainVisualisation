@@ -11,8 +11,8 @@ function ThreeNodeTransactionGraph() {
 ThreeNodeTransactionGraph.prototype = Object.create(TransactionGraph.prototype);
 ThreeNodeTransactionGraph.prototype.constructor = ThreeNodeTransactionGraph;
 
-ThreeNodeTransactionGraph.prototype.processTrasaction = function(sender, reciever, transactionHash, isNew) {
-  TransactionGraph.prototype.processTrasaction.call(this, sender, reciever, transactionHash);
+ThreeNodeTransactionGraph.prototype.processTransaction = function(sender, reciever, transactionHash, isNew) {
+  TransactionGraph.prototype.processTransaction.call(this, sender, reciever, transactionHash);
   this.nodes.push(new Nodes.TransactionNode(transactionHash));
   this.createEdges(transactionHash, sender, reciever, isNew);
 }
@@ -30,6 +30,11 @@ ThreeNodeTransactionGraph.prototype.createEdges = function(hash, source, target,
       this.edges.push(new Edges.ContractEdge(this.edgeCount, hash, target.address)); this.edgeCount++;
     }
   }
+}
+
+ThreeNodeTransactionGraph.prototype.deleteProperties = function() {
+  TransactionGraph.prototype.deleteProperties.call(this);
+  delete this.edgeCount;
 }
 
 module.exports = ThreeNodeTransactionGraph;

@@ -4,6 +4,7 @@ function Edge(id, source, target) {
   this.source = source;
   this.target = target;
   this.type = 'arrow';
+  this.size = 1;
 }
 
 function AccountEdge(id, source, target) {
