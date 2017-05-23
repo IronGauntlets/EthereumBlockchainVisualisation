@@ -14,7 +14,7 @@ function getBlock(id, callback) {
       console.log();
       console.log('Connected successfully to the server');
       var blocksCollection = db.collection('blocks');
-      blocksCollection.findOne({$or: [{hash: id}, {number: id}]}, (err, resultBlock) => {
+      blocksCollection.findOne({$or: [{hash: id}, {number: parseInt(id)}]}, (err, resultBlock) => {
         if (err) {console.log(err);}
         else {
           if (resultBlock) {
