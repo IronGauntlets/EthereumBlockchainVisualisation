@@ -1,6 +1,5 @@
 const Web3 = require('web3');
-// const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.46.159:8545"));
-const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.46.159:8545"));
 
 const Account = require('./account.js');
 const mongoClient = require('mongodb').MongoClient;
