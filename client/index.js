@@ -57,7 +57,7 @@ app.get('/three_node_multiple_block_transactions/:id/:count', function (req, res
 })
 
 // Start listening when running on local node
-var server = app.listen(8000, 'localhost', function(){
+var server = app.listen(8000, '0.0.0.0', function(){
   var host = server.address().address;
   var port = server.address().port;
 
