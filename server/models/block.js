@@ -3,7 +3,7 @@ const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.46.159:854
 
 const Account = require('./account.js');
 const mongoClient = require('mongodb').MongoClient;
-const mongoURL = 'mongodb://localhost:27017/ethereum_blockchain';
+const mongoURL = 'mongodb://146.169.46.80:27017/ethereum_blockchain';
 
 function getBlock(id, callback) {
   mongoClient.connect(mongoURL, function(err, db) {
