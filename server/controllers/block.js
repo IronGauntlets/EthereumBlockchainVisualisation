@@ -2,6 +2,7 @@ const express  = require('express');
 const router = express.Router();
 
 const Block = require('../models/block.js');
+const ToGraphML = require('./graphml_creator.js');
 const TwoNodeTransactionGraph = require('../models/transaction_graph/two_node_transaction_graph.js');
 const ThreeNodeTransactionGraph = require('../models/transaction_graph/three_node_transaction_graph.js');
 
@@ -11,6 +12,18 @@ router.get('/:id/two_node', function(req, res) {
   processSingleBlock(req.params.id, twoNodeGraph, () => {
     twoNodeGraph.deleteProperties();
     res.json(twoNodeGraph);
+    console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
+  });
+})
+
+//Return block as acquired from web3js with transaction objects for two node in graphml
+router.get('/:id/two_node/graphml', function(req, res) {
+  var twoNodeGraph = new TwoNodeTransactionGraph();
+  processSingleBlock(req.params.id, twoNodeGraph, () => {
+    twoNodeGraph.deleteProperties();
+    var toGraphMl = new ToGraphML(twoNodeGraph, true);
+    toGraphMl.create();
+    res.header('Content-Type','text/xml').send(toGraphMl.graphml);
     console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
   });
 })
@@ -25,6 +38,18 @@ router.get('/:id/three_node', function(req, res) {
   })
 })
 
+//Return block as acquired from web3js with transaction objects for three node in graphml
+router.get('/:id/three_node/graphml', function(req, res) {
+  var threeNodeGraph = new ThreeNodeTransactionGraph();
+  processSingleBlock(req.params.id, threeNodeGraph, () => {
+    threeNodeGraph.deleteProperties();
+    var toGraphMl = new ToGraphML(threeNodeGraph, true);
+    toGraphMl.create();
+    res.header('Content-Type','text/xml').send(toGraphMl.graphml);
+    console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
+  })
+})
+
 //Return multiple block according to the count requested for two node
 router.get('/:id/two_node/:count', function(req, res) {
   var twoNodeGraph = new TwoNodeTransactionGraph();
@@ -35,12 +60,36 @@ router.get('/:id/two_node/:count', function(req, res) {
   });
 })
 
+//Return multiple block according to the count requested for two node in graphml
+router.get('/:id/two_node/:count/graphml', function(req, res) {
+  var twoNodeGraph = new TwoNodeTransactionGraph();
+  processMultipleBlocks(req.params.id, req.params.count, twoNodeGraph, () => {
+    twoNodeGraph.deleteProperties();
+    var toGraphMl = new ToGraphML(twoNodeGraph, true);
+    toGraphMl.create();
+    res.header('Content-Type','text/xml').send(toGraphMl.graphml);
+    console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
+  });
+})
+
 //Return multiple block according to the count requested for three node
 router.get('/:id/three_node/:count', function(req, res) {
   var threeNodeGraph = new ThreeNodeTransactionGraph();
   processMultipleBlocks(req.params.id, req.params.count, threeNodeGraph, () => {
     threeNodeGraph.deleteProperties();
     res.json(threeNodeGraph);
+    console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
+  });
+})
+
+//Return multiple block according to the count requested for three node in graphml
+router.get('/:id/three_node/:count/graphml', function(req, res) {
+  var threeNodeGraph = new ThreeNodeTransactionGraph();
+  processMultipleBlocks(req.params.id, req.params.count, threeNodeGraph, () => {
+    threeNodeGraph.deleteProperties();
+    var toGraphMl = new ToGraphML(threeNodeGraph, true);
+    toGraphMl.create();
+    res.header('Content-Type','text/xml').send(toGraphMl.graphml);
     console.log('Sending response for ' + req.method +' for URI: ' + req.url + ' at ' + new Date().toUTCString());
   });
 })
