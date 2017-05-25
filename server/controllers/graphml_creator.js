@@ -103,7 +103,6 @@ function ToGraphML(jsonGraph, directed) {
 }
 
 ToGraphML.prototype.create = function() {
-  console.log(this.graphMLObj);
   this.graphml = (builder.create(this.graphMLObj, {encoding: 'UTF-8'})).end({pretty: true});
 }
 
