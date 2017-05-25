@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "^4.14.1",
     "mongodb": "^2.2.26",
-    "web3": "^0.18.2"
+    "web3": "^0.18.2",
+    "xmlbuilder": "^9.0.0"
   }
 }
