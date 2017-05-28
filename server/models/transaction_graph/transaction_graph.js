@@ -13,35 +13,20 @@ function TransactionGraph() {
   this.nodesHashMap = {};
 }
 
-TransactionGraph.prototype.processSingleBlock = function(blockId, callback, request, response) {
-  //Get the relevant block
-  Block.getBlock(blockId, (r) => {
-    this.processTransactionsToGraph(r.transactions);
-    callback(this, request, response);
-  })
-}
-
-TransactionGraph.prototype.processMultipleBlocks = function(blockId, count, callback, request, response) {
+TransactionGraph.prototype.processBlocks = function(blockId, count, info, callback, request, response) {
   if (count > 0) {
     Block.getBlock(blockId, (block) => {
       console.log('Block number: ' + block.number + ' and count: ' + count);
-      this.processTransactionsToGraph(block.transactions);
-      this.processMultipleBlocks(block.parentHash, count-1, callback, request, response);
+      this.processTransactionsToGraph(block.transactions, info);
+      this.processBlocks(block.parentHash, count-1, info, callback, request, response);
     })
   } else {
     callback(this, request, response);
   }
 }
 
-TransactionGraph.prototype.processTransactionsToGraph = function(transactions) {
-  console.log("Processing transactions");
-  for (var i = 0; i < transactions.length; i++) {
-    this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].isNew);
-  }
-}
-
 // Methods to be overridden in subclasses
-TransactionGraph.prototype.processTransaction = function(sender, reciever, transactionHash) {
+TransactionGraph.prototype.processTransaction = function(sender, reciever) {
   // Determine whether the sender and reciever are already in nodes
   var senderInNodes = this.contains(sender.address);
   var recieverInNodes = this.contains(reciever.address);
