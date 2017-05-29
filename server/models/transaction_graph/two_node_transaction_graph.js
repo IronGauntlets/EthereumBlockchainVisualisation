@@ -32,7 +32,6 @@ TwoNodeTransactionGraph.prototype.processBlocks = function(blockId, count, info,
       var totalGas = this.transactionHashMap[property];
       this.processTransaction(this.allTransactions[i].from, this.allTransactions[i].to, totalGas);
     }
-    console.log(this.nodesHashMap);
     callback(this, request, response);
   }
 }
@@ -63,21 +62,19 @@ TwoNodeTransactionGraph.prototype.processTransaction = function(sender, reciever
   this.createEdge(sender, reciever, size);
 }
 
-TwoNodeTransactionGraph.prototype.createEdge = function(source, target, isTransactionNew, size) {
-  if (target.isContract && isTransactionNew) {
-    this.edges.push(new Edge(this.edgeCount, source.address, target.address, contractCreationEdgeColor, size, arrow)); this.edgeCount++;
+TwoNodeTransactionGraph.prototype.createEdge = function(source, target, size) {
+  if (!source.isContract) {
+    this.edges.push(new Edge(this.edgeCount, source.address, target.address, accountEdgeColor, size, arrow)); this.edgeCount++;
   } else {
-    if (!source.isContract) {
-      this.edges.push(new Edge(this.edgeCount, source.address, target.address, accountEdgeColor, size, arrow)); this.edgeCount;
-    } else {
-      this.edges.push(new Edge(this.edgeCount, source.address, target.address, contractEdgeColor, size, arrow)); this.edgeCount;
-    }
+    this.edges.push(new Edge(this.edgeCount, source.address, target.address, contractEdgeColor, size, arrow)); this.edgeCount++;
   }
 }
 
 TwoNodeTransactionGraph.prototype.deleteProperties = function() {
   TransactionGraph.prototype.deleteProperties.call(this);
   delete this.edgeCount;
+  delete this.allTransactions;
+  delete this.transactionHashMap;
 }
 
 module.exports = TwoNodeTransactionGraph;
