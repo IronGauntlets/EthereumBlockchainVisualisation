@@ -19,30 +19,19 @@ app.use(function(req, res, next){
 
 // Send files for these requests and for testing visualisations
 app.use("/utils", express.static(path.join(__dirname + '/utils')));
-app.use("/test_visualisations", express.static(path.join(__dirname + '/test_visualisations')));
 
 // Send favicon
 app.get('/favicon.ico', function (req, res) {
   res.sendFile(path.join(__dirname+'/favicon.ico'));
 });
 
-// Resquest for 2 node single block transactions
-app.get('/single_two_node/:id', function (req, res) {
-  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/two_node_single_block_transactions.html'))
-})
-
-// Resquest for 3 node single block transactions
-app.get('/single_three_node/:id', function (req, res) {
-  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/three_node_single_block_transactions.html'))
-})
-
 // Resquest for 2 node multiple single block transactions
-app.get('/multiple_two_node/:id/:count', function (req, res) {
+app.get('/block/two_node/:id/:count', function (req, res) {
   res.sendFile(path.join(__dirname+'/visualisations/block_transactions/two_node_multiple_block_transactions.html'))
 })
 
 // Resquest for 3 node multiple single block transactions
-app.get('/multiple_three_node/:id/:count', function (req, res) {
+app.get('/block/three_node/:id/:count', function (req, res) {
   res.sendFile(path.join(__dirname+'/visualisations/block_transactions/three_node_multiple_block_transactions.html'))
 })
 
