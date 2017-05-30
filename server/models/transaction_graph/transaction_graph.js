@@ -13,15 +13,15 @@ function TransactionGraph() {
   this.nodesHashMap = {};
 }
 
-TransactionGraph.prototype.processBlocks = function(blockId, count, info, callback, request, response) {
+TransactionGraph.prototype.processBlocks = function(blockId, count, info, callback, request, response, directed) {
   if (count > 0) {
     Block.getBlock(blockId, (block) => {
       console.log('Block number: ' + block.number + ' and count: ' + count);
       this.processTransactionsToGraph(block.transactions, info);
-      this.processBlocks(block.parentHash, count-1, info, callback, request, response);
+      this.processBlocks(block.parentHash, count-1, info, callback, request, response, directed);
     })
   } else {
-    callback(this, request, response);
+    callback(this, request, response, directed);
   }
 }
 

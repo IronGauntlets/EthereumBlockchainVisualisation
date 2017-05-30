@@ -29,9 +29,9 @@ ThreeNodeTransactionGraph.prototype.processTransactionsToGraph = function(transa
   }
 }
 
-ThreeNodeTransactionGraph.prototype.processTransaction = function(sender, reciever, transactionHash, isNew, gasUsed) {
+ThreeNodeTransactionGraph.prototype.processTransaction = function(sender, reciever, transactionHash, isNew, value) {
   TransactionGraph.prototype.processTransaction.call(this, sender, reciever);
-  this.nodes.push(new Node(transactionHash, transactionNodeColor, gasUsed));
+  this.nodes.push(new Node(transactionHash, transactionNodeColor, value));
   this.createEdges(transactionHash, sender, reciever, isNew);
 }
 
