@@ -27,16 +27,17 @@
   <script type="text/javascript" src='../../utils/http.js'></script>
   <script type="text/javascript">
   var paths = window.location.pathname.split('/');
-  var blockNumberOrHash = paths[2];
-  var count = paths[3];
+  var blockNumberOrHash = paths[3];
+  var count = paths[4];
 
-  // var blockUrl = "http://localhost:3000/api/block"; //when running locally
-  var blockUrl = "http://146.169.46.80:3000/api/block";
+  var blockUrl = "http://localhost:3000/api/block"; //when running locally
+  // var blockUrl = "http://146.169.46.80:3000/api/block";
   var url = blockUrl + '/two_node' + '/' + blockNumberOrHash  + '/' + count;
 
   http.get(url, function(res, err) {
     if (res != null) {
       var graph = JSON.parse(res);
+      console.log(graph);
       console.log("Nodes: " + graph.nodes.length);
       console.log("Edges: " + graph.edges.length);
       createGraph(graph, 'container');
@@ -49,8 +50,8 @@
     var graphSettings = {
       minNodeSize: 1,
       maxNodeSize: 2,
-      minEdgeSize: 1,
-      maxEdgeSize: 20,
+      minEdgeSize: 2,
+      maxEdgeSize: 2,
       scalingMode: "inside",
       sideMargin: 2
     }
