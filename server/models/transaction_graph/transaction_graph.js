@@ -1,5 +1,10 @@
-const Edges = require('./edge.js');
-const Nodes = require('./node.js');
+const Edge = require('./edge.js');
+const Node = require('./node.js');
+const Block = require('../block.js');
+
+const defaultSize = 1;
+const contractNodeColor = '#e3b93c';
+const accountNodeColor = '#04c975';
 
 // Base class for creating different graphs
 function TransactionGraph() {
@@ -7,8 +12,21 @@ function TransactionGraph() {
   this.edges = [];
   this.nodesHashMap = {};
 }
+
+TransactionGraph.prototype.processBlocks = function(blockId, count, info, callback, request, response, directed) {
+  if (count > 0) {
+    Block.getBlock(blockId, (block) => {
+      console.log('Block number: ' + block.number + ' and count: ' + count);
+      this.processTransactionsToGraph(block.transactions, info);
+      this.processBlocks(block.parentHash, count-1, info, callback, request, response, directed);
+    })
+  } else {
+    callback(this, request, response, directed);
+  }
+}
+
 // Methods to be overridden in subclasses
-TransactionGraph.prototype.processTransaction = function(sender, reciever, transactionHash) {
+TransactionGraph.prototype.processTransaction = function(sender, reciever) {
   // Determine whether the sender and reciever are already in nodes
   var senderInNodes = this.contains(sender.address);
   var recieverInNodes = this.contains(reciever.address);
@@ -34,9 +52,9 @@ TransactionGraph.prototype.processTransaction = function(sender, reciever, trans
 // Create relative nodes
 TransactionGraph.prototype.createNode = function(senderOrReciever) {
   if (senderOrReciever.isContract) {
-    return new Nodes.ContractNode(senderOrReciever.address);
+    return new Node(senderOrReciever.address, contractNodeColor, defaultSize);
   } else {
-    return new Nodes.AccountNode(senderOrReciever.address);
+    return new Node(senderOrReciever.address, accountNodeColor, defaultSize);
   }
 }
 

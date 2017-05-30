@@ -12,7 +12,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: #0F1D20;
+    background-color: #0B1719;
   }
   </style>
 </head>
@@ -27,16 +27,19 @@
   <script type="text/javascript" src='../../utils/http.js'></script>
   <script type="text/javascript">
   var paths = window.location.pathname.split('/');
-  var blockNumberOrHash = paths[2];
-  var count = paths[3];
+  var blockNumberOrHash = paths[3];
+  var count = paths[4];
 
-  // var blockUrl = "http://localhost:3000/api/block"; when running locally
-  var blockUrl = "http://146.169.46.80:3000/api/block";
-  var url = blockUrl + '/' + blockNumberOrHash + '/three_node' + '/' + count;
+  var blockUrl = "http://localhost:3000/api/block"; //when running locally
+  // var blockUrl = "http://146.169.46.80:3000/api/block";
+  var url = blockUrl + '/three_node' + '/' + blockNumberOrHash  + '/' + count;
 
   http.get(url, function(res, err) {
     if (res != null) {
       var graph = JSON.parse(res);
+      console.log(graph);
+      console.log("Nodes: " + graph.nodes.length);
+      console.log("Edges: " + graph.edges.length);
       createGraph(graph, 'container');
     } else {
       console.error('GET ERROR: ' + err);
@@ -45,20 +48,19 @@
 
   function createGraph(g, container) {
     var graphSettings = {
-      minNodeSize: 1,
-      maxNodeSize: 2,
+      // minNodeSize: 1,
+      // maxNodeSize: 1.5,
       // minEdgeSize: 10,
       // maxEdgeSize: 10,
       scalingMode: "inside",
-      sideMargin: 10
+      sideMargin: 2
     }
 
     var forceConfig = {
       worker: true,
       barnesHutOptimize: true,
-      gravity: 5,
-      // strongGravityMode:true,
-      slowDown: 10
+      strongGravityMode:true,
+      slowDown: 3
     }
 
     var s = new sigma({
@@ -70,7 +72,7 @@
     s.startForceAtlas2(forceConfig);
     setTimeout(function() {
       s.stopForceAtlas2();
-    },120000);
+    },1200000);
   }
 
   </script>

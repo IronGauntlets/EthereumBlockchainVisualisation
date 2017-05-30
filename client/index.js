@@ -18,42 +18,31 @@ app.use(function(req, res, next){
 })
 
 // Send files for these requests and for testing visualisations
-app.use("/utils", express.static(path.join(__dirname + '/utils')));
-app.use("/test_visualisations", express.static(path.join(__dirname + '/test_visualisations')));
+app.use("/block/utils", express.static(path.join(__dirname + '/utils')));
 
 // Send favicon
 app.get('/favicon.ico', function (req, res) {
   res.sendFile(path.join(__dirname+'/favicon.ico'));
 });
 
-// Test two node visualisation that has been stored locally
-app.get('/test_three_node_multiple_blocks', function (req, res) {
-  res.sendFile(path.join(__dirname+'/test_visualisations/test_three_node_multiple_blocks.html'));
-});
-
-// Test three node visualisation that has been stored locally
-app.get('/test_two_node_multiple_blocks', function (req, res) {
-  res.sendFile(path.join(__dirname+'/test_visualisations/test_two_node_multiple_blocks.html'));
-});
-
-// Resquest for 2 node single block transactions
-app.get('/two_node_single_block_transactions/:id', function (req, res) {
-  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/two_node_single_block_transactions.html'))
+// Resquest for 2 node multiple single block transactions using gas
+app.get('/block/two_node/:id/:count', function (req, res) {
+  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/two_node.html'))
 })
 
-// Resquest for 3 node single block transactions
-app.get('/three_node_single_block_transactions/:id', function (req, res) {
-  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/three_node_single_block_transactions.html'))
+// Resquest for 2 node multiple single block transactions using ether
+app.get('/block/two_node/:id/:count/ether', function (req, res) {
+  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/two_node_ether.html'))
 })
 
-// Resquest for 2 node multiple single block transactions
-app.get('/two_node_multiple_block_transactions/:id/:count', function (req, res) {
-  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/two_node_multiple_block_transactions.html'))
+// Resquest for 3 node multiple single block transactions using gas
+app.get('/block/three_node/:id/:count', function (req, res) {
+  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/three_node.html'))
 })
 
-// Resquest for 3 node multiple single block transactions
-app.get('/three_node_multiple_block_transactions/:id/:count', function (req, res) {
-  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/three_node_multiple_block_transactions.html'))
+// Resquest for 3 node multiple single block transactions using ether
+app.get('/block/three_node/:id/:count/ether', function (req, res) {
+  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/three_node_ether.html'))
 })
 
 // Start listening when running on local node
