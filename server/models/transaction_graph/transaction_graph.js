@@ -14,15 +14,13 @@ function TransactionGraph() {
 }
 
 TransactionGraph.prototype.processBlocks = function(blockId, count, info, callback, request, response, directed) {
-  if (count > 0) {
-    Block.getBlock(blockId, (block) => {
-      console.log('Block number: ' + block.number + ' and count: ' + count);
-      this.processTransactionsToGraph(block.transactions, info);
-      this.processBlocks(block.parentHash, count-1, info, callback, request, response, directed);
-    })
-  } else {
+  Block.getBlocks(blockId, count, (blocks) => {
+    for (var i = 0; i < blocks.length; i++) {
+      console.log('i: ' + i);
+      this.processTransactionsToGraph(blocks[i].transactions, info);
+    }
     callback(this, request, response, directed);
-  }
+  })
 }
 
 // Methods to be overridden in subclasses

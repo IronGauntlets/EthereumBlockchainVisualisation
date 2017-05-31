@@ -1,7 +1,12 @@
+const Web3 = require('web3');
+const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.47.31:8545"));
+
 const TransactionGraph = require('./transaction_graph.js');
 const Block = require('../block.js');
 const Edge = require('./edge.js');
 const Node = require('./node.js');
+
+const etherDenomination = 'gwei';
 
 const defaultSize = 1;
 const arrow = 'arrow';
@@ -20,13 +25,11 @@ TwoNodeTransactionGraph.prototype = Object.create(TransactionGraph.prototype);
 TwoNodeTransactionGraph.prototype.constructor = TwoNodeTransactionGraph;
 
 TwoNodeTransactionGraph.prototype.processBlocks = function(blockId, count, info, callback, request, response, directed) {
-  if (count > 0) {
-    Block.getBlock(blockId, (block) => {
-      console.log('Block number: ' + block.number + ' and count: ' + count);
-      this.processTransactionsToGraph(block.transactions, info);
-      this.processBlocks(block.parentHash, count-1, info, callback, request, response, directed);
-    })
-  } else {
+  Block.getBlocks(blockId, count, (blocks) => {
+    for (var i = 0; i < blocks.length; i++) {
+      console.log('i: ' + i);
+      this.processTransactionsToGraph(blocks[i].transactions, info);
+    }
     this.range = range(this.transactionHashMap);
     for (var i = 0; i < this.allTransactions.length; i++) {
       var property = this.allTransactions[i].from.address + this.allTransactions[i].to.address;
@@ -36,24 +39,30 @@ TwoNodeTransactionGraph.prototype.processBlocks = function(blockId, count, info,
       this.processTransaction(this.allTransactions[i].from, this.allTransactions[i].to, edgeColour);
     }
     callback(this, request, response, directed);
-  }
+  })
 }
 
 TwoNodeTransactionGraph.prototype.processTransactionsToGraph = function(transactions, info) {
-  console.log("Processing transactions");
-  if (info == 'value') {
-    //Remeber to do calculations according to bignumber
-  }
-  else {
-    for (var i = 0; i < transactions.length; i++) {
-      var check = transactions[i].from.address + transactions[i].to.address;
-      if (this.transactionHashMap.hasOwnProperty(check)) {
+  for (var i = 0; i < transactions.length; i++) {
+    var check = transactions[i].from.address + transactions[i].to.address;
+    if (this.transactionHashMap.hasOwnProperty(check)) {
+      if (info == 'value') {
+        transactions[i].value = parseInt(web3.fromWei(transactions[i].value), etherDenomination);
+        this.transactionHashMap[check] = this.transactionHashMap[check] + transactions[i].value;
+      }
+      else {
         this.transactionHashMap[check] = this.transactionHashMap[check] + transactions[i].gasUsed;
-      } else {
-        this.allTransactions.push({
-          from : transactions[i].from,
-          to : transactions[i].to
-        })
+      }
+    } else {
+      this.allTransactions.push({
+        from : transactions[i].from,
+        to : transactions[i].to
+      })
+      if (info == 'value') {
+        transactions[i].value = parseInt(web3.fromWei(transactions[i].value), etherDenomination);
+        this.transactionHashMap[check] = transactions[i].value;
+      }
+      else {
         this.transactionHashMap[check] = transactions[i].gasUsed;
       }
     }

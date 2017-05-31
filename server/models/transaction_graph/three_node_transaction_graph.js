@@ -1,6 +1,11 @@
+const Web3 = require('web3');
+const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.47.31:8545"));
+
 const TransactionGraph = require('./transaction_graph.js');
 const Edge = require('./edge.js');
 const Node = require('./node.js');
+
+const etherDenomination = 'gwei';
 
 const contractCreationEdgeColor = '#80b6ad';
 const transactionNodeColor = '#1b7a91';
@@ -18,12 +23,12 @@ ThreeNodeTransactionGraph.prototype = Object.create(TransactionGraph.prototype);
 ThreeNodeTransactionGraph.prototype.constructor = ThreeNodeTransactionGraph;
 
 ThreeNodeTransactionGraph.prototype.processTransactionsToGraph = function(transactions, info) {
-  console.log("Processing transactions");
-  if (info == 'value') {
-    //Remeber to do calculations according to bignumber
-  }
-  else  {
-    for (var i = 0; i < transactions.length; i++) {
+  for (var i = 0; i < transactions.length; i++) {
+    if (info == 'value') {
+      transactions[i].value = parseFloat(web3.fromWei(transactions[i].value, etherDenomination));
+      this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].isNew, transactions[i].value);
+    }
+    else  {
       this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].isNew, transactions[i].gasUsed);
     }
   }

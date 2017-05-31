@@ -1,19 +1,55 @@
 const Web3 = require('web3');
-const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.46.159:8545"));
+const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.47.31:8545"));
 
 const Account = require('./account.js');
 const mongoClient = require('mongodb').MongoClient;
-const mongoURL = 'mongodb://146.169.46.80:27017/ethereum_blockchain';
+const mongoURL = 'mongodb://localhost:27017/ethereum_blockchain';
+const mongodbCollection = 'blocks2';
+
+function getBlocks(id, count, callback) {
+  var newId = parseInt(id);
+  mongoClient.connect(mongoURL, (err, db) => {
+    if (err) {console.log('Unable to connet to MongoDB', err);}
+    else {console.log(); console.log('getBlocks: Connected successfully to the server');
+      var blocksCollection = db.collection(mongodbCollection);
+      var query = {number: {$lte: newId, $gt: (newId - count)}};
+      blocksCollection.find(query).toArray((err, docs) => {
+        if (count - docs.length == 0) {
+          db.close();
+          console.log('getBlocks: Closed MongoDB connection');
+          callback(docs);
+        } else {
+          getBlocksRecursively(newId, count, [], (docs) => {
+            console.log();
+            console.log('length of block array: '+docs.length);
+            db.close();
+            console.log();
+            console.log('getBlocks: Closed MongoDB connection');
+            callback(docs);
+          });
+        }
+      });
+    }
+  })
+}
+
+function getBlocksRecursively(id, count, blocksArr, callback) {
+  if (count > 0) {
+    getBlock(id, (block) => {console.log('Block number: ' + block.number + ' and count: ' + count);
+      blocksArr.push(block);
+      getBlocksRecursively(block.parentHash, count-1, blocksArr, callback);
+    })
+  }
+  else {
+    callback(blocksArr)
+  }
+}
 
 function getBlock(id, callback) {
-  mongoClient.connect(mongoURL, function(err, db) {
-    if (err) {
-      console.log('Unable to connet to MongoDB', err);
-    }
-    else {
-      console.log();
-      console.log('Connected successfully to the server');
-      var blocksCollection = db.collection('blocks');
+  mongoClient.connect(mongoURL, (err, db) => {
+    if (err) {console.log('Unable to connet to MongoDB', err);}
+    else {console.log(); console.log('Connected successfully to the server');
+      var blocksCollection = db.collection(mongodbCollection);
       blocksCollection.findOne({$or: [{hash: id}, {number: parseInt(id)}]}, (err, resultBlock) => {
         if (err) {console.log(err);}
         else {
@@ -29,8 +65,7 @@ function getBlock(id, callback) {
             // Add the new block to MongoDB
             blocksCollection.insertOne(block, (err, r) => {
               if (err) {console.log('Unable to insert block: ' + err);}
-              else {
-                console.log('Successfully inserted the Block ' + block.number + ' in MongoDB');
+              else {console.log('Successfully inserted the Block ' + block.number + ' in MongoDB');
                 db.close();
                 console.log('Closed MongoDB connection');
                 callback(r.ops[0]);
@@ -46,6 +81,8 @@ function getBlock(id, callback) {
 
 function updateBlock(block) {
   console.log('Updating ' + block.transactions.length +  ' transactions' );
+  block.difficulty = block.difficulty.toString(10);
+  block.totalDifficulty = block.totalDifficulty.toString(10);
   for (var i = 0; i < block.transactions.length; i++) {
     updateTransaction(block.transactions[i], block.number);
   }
@@ -56,6 +93,8 @@ function updateTransaction(transaction, blockNumber) {
   var newSender = new Account(transaction.from);
   var newReciever;
 
+  transaction.value = transaction.value.toString(10);
+  transaction.gasPrice = transaction.gasPrice.toString(10);
   transaction.gasUsed = transactionReceipt.gasUsed;
   transaction.cumulativeGasUsed = transactionReceipt.cumulativeGasUsed;
   transaction.isNew = false;
@@ -77,5 +116,5 @@ function updateTransaction(transaction, blockNumber) {
 }
 
 module.exports = {
-  getBlock: getBlock
+  getBlocks: getBlocks
 }

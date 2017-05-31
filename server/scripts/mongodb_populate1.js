@@ -1,34 +1,61 @@
 const Web3 = require('web3');
-const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.46.159:8545"));
+// Change address accordingly
+const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.47.31:8545"));
 
 const mongoClient = require('mongodb').MongoClient;
-const mongoURL = 'mongodb://146.169.46.80:27017/ethereum_blockchain';
+const mongoURL = 'mongodb://localhost:27017/ethereum_blockchain';
+const mongodbCollection = 'blocks2';
 
-var blockNumber = 3756910;
-var startBlock = '0x7b89944ddbd812a2c9b27bb5a1a04801e34120c50d8c6802f4262c8a723dce4c' //Number = 3756910
+var blcNum = 1000000;
+var count  = 1000000;
 
-function populateMongoDB(startBlockId, n) {
-  if (n > 0) {
-    getBlock(startBlockId, (block) => {
-      if (block != null) {
-        console.log('Block number: ' + block.number + ' and count: ' + n);
-        populateMongoDB(block.parentHash, n-1);
-      }
+getBlocks(blcNum, count, ()=> {
+  console.log('done');
+});
+
+function getBlocks(id, count, callback) {
+  var newId = parseInt(id);
+  mongoClient.connect(mongoURL, (err, db) => {
+    if (err) {console.log('Unable to connet to MongoDB', err);}
+    else {console.log(); console.log('getBlocks: Connected successfully to the server');
+      var blocksCollection = db.collection(mongodbCollection);
+      var query = {number: {$lte: newId, $gt: (newId - count)}};
+      blocksCollection.find(query).toArray((err, docs) => {
+        if (count - docs.length == 0) {
+          db.close();
+          console.log('getBlocks: Closed MongoDB connection');
+          callback();
+        } else {
+          getBlocksRecursively(newId, count, () => {
+            console.log();
+            console.log('length of block array: '+docs.length);
+            db.close();
+            console.log();
+            console.log('getBlocks: Closed MongoDB connection');
+            callback();
+          });
+        }
+      });
+    }
+  })
+}
+
+function getBlocksRecursively(id, count, callback) {
+  if (count > 0) {
+    getBlock(id, (block) => {console.log('Block number: ' + block.number + ' and count: ' + count);
+      getBlocksRecursively(block.parentHash, count-1, callback);
     })
+  }
+  else {
+    callback()
   }
 }
 
-populateMongoDB(startBlock, blockNumber);
-
 function getBlock(id, callback) {
-  mongoClient.connect(mongoURL, function(err, db) {
-    if (err) {
-      console.log('Unable to connet to MongoDB', err);
-    }
-    else {
-      console.log();
-      console.log('Connected successfully to the server');
-      var blocksCollection = db.collection('blocks');
+  mongoClient.connect(mongoURL, (err, db) => {
+    if (err) {console.log('Unable to connet to MongoDB', err);}
+    else {console.log(); console.log('Connected successfully to the server');
+      var blocksCollection = db.collection(mongodbCollection);
       blocksCollection.findOne({$or: [{hash: id}, {number: parseInt(id)}]}, (err, resultBlock) => {
         if (err) {console.log(err);}
         else {
@@ -44,8 +71,7 @@ function getBlock(id, callback) {
             // Add the new block to MongoDB
             blocksCollection.insertOne(block, (err, r) => {
               if (err) {console.log('Unable to insert block: ' + err);}
-              else {
-                console.log('Successfully inserted the Block ' + block.number + ' in MongoDB');
+              else {console.log('Successfully inserted the Block ' + block.number + ' in MongoDB');
                 db.close();
                 console.log('Closed MongoDB connection');
                 callback(r.ops[0]);
@@ -61,6 +87,8 @@ function getBlock(id, callback) {
 
 function updateBlock(block) {
   console.log('Updating ' + block.transactions.length +  ' transactions' );
+  block.difficulty = block.difficulty.toString(10);
+  block.totalDifficulty = block.totalDifficulty.toString(10);
   for (var i = 0; i < block.transactions.length; i++) {
     updateTransaction(block.transactions[i], block.number);
   }
@@ -71,6 +99,8 @@ function updateTransaction(transaction, blockNumber) {
   var newSender = new Account(transaction.from);
   var newReciever;
 
+  transaction.value = transaction.value.toString(10);
+  transaction.gasPrice = transaction.gasPrice.toString(10);
   transaction.gasUsed = transactionReceipt.gasUsed;
   transaction.cumulativeGasUsed = transactionReceipt.cumulativeGasUsed;
   transaction.isNew = false;

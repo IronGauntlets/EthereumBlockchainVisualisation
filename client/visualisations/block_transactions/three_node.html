@@ -29,9 +29,10 @@
   var paths = window.location.pathname.split('/');
   var blockNumberOrHash = paths[3];
   var count = paths[4];
+  console.log(paths);
 
-  var blockUrl = "http://localhost:3000/api/block"; //when running locally
-  // var blockUrl = "http://146.169.46.80:3000/api/block";
+  // var blockUrl = "http://localhost:3000/api/block"; //when running locally
+  var blockUrl = "http://146.169.46.80:3000/api/block";
   var url = blockUrl + '/three_node' + '/' + blockNumberOrHash  + '/' + count;
 
   http.get(url, function(res, err) {
@@ -72,7 +73,7 @@
     s.startForceAtlas2(forceConfig);
     setTimeout(function() {
       s.stopForceAtlas2();
-    },1200000);
+    },180000);
   }
 
   </script>
