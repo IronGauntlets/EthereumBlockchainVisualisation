@@ -43,7 +43,7 @@ ThreeNodeTransactionGraph.prototype.processTransaction = function(sender, reciev
 ThreeNodeTransactionGraph.prototype.createEdges = function(hash, source, target, isTransactionNew) {
   if (target.isContract && isTransactionNew) {
     this.edges.push(new Edge(this.edgeCount, source.address, hash, contractCreationEdgeColor, null, null)); this.edgeCount++;
-    this.edges.push(new Edge(this.edgeCount, hash, target.address, transactionEdgeColor, null, null)); this.edgeCount++;
+    this.edges.push(new Edge(this.edgeCount, hash, target.address, contractCreationEdgeColor, null, null)); this.edgeCount++;
   } else {
     if (!source.isContract) {
       this.edges.push(new Edge(this.edgeCount, source.address, hash, accountEdgeColor, null, null)); this.edgeCount++;

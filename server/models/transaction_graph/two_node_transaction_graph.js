@@ -27,7 +27,7 @@ TwoNodeTransactionGraph.prototype.constructor = TwoNodeTransactionGraph;
 TwoNodeTransactionGraph.prototype.processBlocks = function(blockId, count, info, callback, request, response, directed) {
   Block.getBlocks(blockId, count, (blocks) => {
     for (var i = 0; i < blocks.length; i++) {
-      console.log('i: ' + i);
+      if( (i+1) % 50) {console.log('i: ' + (i+1))};
       this.processTransactionsToGraph(blocks[i].transactions, info);
     }
     this.range = range(this.transactionHashMap);
