@@ -1,0 +1,104 @@
+const Web3 = require('web3');
+const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.47.31:8545"));
+
+const TransactionGraph = require('./transaction_graph.js');
+const Edge = require('./edge.js');
+const Node = require('./node.js');
+
+const etherDenomination = 'gwei';
+
+const defaultSize = 0;
+const arrow = 'arrow';
+const contractColour = '#e3b93c';
+const accountColour = '#04c975';
+const contractCreationColour = '#80b6ad';
+const inputColour = '#015430';
+const outputColour = '#104957';
+
+function AccountTransactionGraph(account) {
+  TransactionGraph.call(this);
+  this.edgeCount = 0;
+  this.account = account.toLowerCase();
+  this.colourHashMap = {};
+  this.blockNodesHashMap = {};
+}
+
+AccountTransactionGraph.prototype = Object.create(TransactionGraph.prototype);
+AccountTransactionGraph.prototype.constructor = AccountTransactionGraph;
+
+AccountTransactionGraph.prototype.processTransactionsToGraph = function(transactions, info) {
+  for (var i = 0; i < transactions.length; i++) {
+    if (this.account == transactions[i].from.address || this.account == transactions[i].to.address) {
+      var blockColour = randomColour();
+      while (colourUsed(blockColour, this.colourHashMap)) {
+        blockColour = randomColour();
+      }
+      if (!this.blockNodesHashMap.hasOwnProperty(transactions[i].blockHash)){
+        this.nodes.push(new Node(transactions[i].blockHash, blockColour, defaultSize));
+        this.blockNodesHashMap[transactions[i].blockHash] = true;
+      }
+      if (info == 'value') {
+        transactions[i].value = parseFloat(web3.fromWei(transactions[i].value, etherDenomination));
+        this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].blockHash, transactions[i].isNew, transactions[i].value);
+      }
+      else {
+        this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].blockHash, transactions[i].isNew, transactions[i].gasUsed);
+      }
+    }
+  }
+}
+
+AccountTransactionGraph.prototype.processTransaction = function(sender, reciever, transactionHash, blockHash, isNew, value){
+  if (this.account == reciever.address) {
+    //use output colour
+    if (reciever.isContract && isNew) {
+      this.nodes.push(new Node(transactionHash, contractColour, value));
+      this.edges.push(new Edge(this.edgeCount, transactionHash, blockHash, contractCreationEdgeColor, defaultSize, arrow));this.edgeCount++;
+    } else {
+      if (!sender.isContract) {
+        this.nodes.push(new Node(transactionHash, accountColour, value));
+        this.edges.push(new Edge(this.edgeCount, transactionHash, blockHash, outputColour, defaultSize, arrow));this.edgeCount++;
+      } else {
+        this.nodes.push(new Node(transactionHash, contractColour, value));
+        this.edges.push(new Edge(this.edgeCount, transactionHash, blockHash, outputColour, defaultSize, arrow));this.edgeCount++;
+      }
+    }
+
+  } else if (this.account == sender.address) {
+    //use input colour
+    if (reciever.isContract && isNew) {
+      this.nodes.push(new Node(transactionHash, contractColour, value));
+      this.edges.push(new Edge(this.edgeCount, blockHash, transactionHash, contractCreationEdgeColor, defaultSize, arrow));this.edgeCount++;
+    } else {
+      if (!sender.isContract) {
+        this.nodes.push(new Node(transactionHash, accountColour, value));
+        this.edges.push(new Edge(this.edgeCount, blockHash, transactionHash, inputColour, defaultSize, arrow));this.edgeCount++;
+      } else {
+        this.nodes.push(new Node(transactionHash, contractColour, value));
+        this.edges.push(new Edge(this.edgeCount, blockHash, transactionHash, inputColour, defaultSize, arrow));this.edgeCount++;
+      }
+    }
+
+  }
+}
+
+AccountTransactionGraph.prototype.deleteProperties = function() {
+  TransactionGraph.prototype.deleteProperties.call(this);
+  delete this.edgeCount;
+  delete this.colourHashMap;
+}
+
+function randomColour() {
+  return '#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6);
+}
+
+function colourUsed(colour, colours) {
+  if (colours.hasOwnProperty(colour)) {
+    return true
+  } else {
+    colours[colour] = true;
+    return false
+  }
+}
+
+module.exports = AccountTransactionGraph;

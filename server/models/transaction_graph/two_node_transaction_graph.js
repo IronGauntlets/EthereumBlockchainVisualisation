@@ -8,17 +8,17 @@ const Node = require('./node.js');
 
 const etherDenomination = 'gwei';
 
-const defaultSize = 1;
+const defaultSize = 0;
 const arrow = 'arrow';
-const colour1 = '#07272E';
+const colour1 = '#125565';
 
 // Subclass for transaction graph
 function TwoNodeTransactionGraph() {
+  TransactionGraph.call(this);
   this.edgeCount = 0;
   this.range;
   this.allTransactions = [];
   this.transactionHashMap = {};
-  TransactionGraph.call(this);
 }
 
 TwoNodeTransactionGraph.prototype = Object.create(TransactionGraph.prototype);
