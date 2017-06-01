@@ -53,7 +53,7 @@ AccountTransactionGraph.prototype.processTransaction = function(sender, reciever
     //use output colour
     if (reciever.isContract && isNew) {
       this.nodes.push(new Node(transactionHash, contractColour, value));
-      this.edges.push(new Edge(this.edgeCount, transactionHash, blockHash, contractCreationEdgeColor, defaultSize, arrow));this.edgeCount++;
+      this.edges.push(new Edge(this.edgeCount, transactionHash, blockHash, contractCreationColour, defaultSize, arrow));this.edgeCount++;
     } else {
       if (!sender.isContract) {
         this.nodes.push(new Node(transactionHash, accountColour, value));
@@ -68,7 +68,7 @@ AccountTransactionGraph.prototype.processTransaction = function(sender, reciever
     //use input colour
     if (reciever.isContract && isNew) {
       this.nodes.push(new Node(transactionHash, contractColour, value));
-      this.edges.push(new Edge(this.edgeCount, blockHash, transactionHash, contractCreationEdgeColor, defaultSize, arrow));this.edgeCount++;
+      this.edges.push(new Edge(this.edgeCount, blockHash, transactionHash, contractCreationColour, defaultSize, arrow));this.edgeCount++;
     } else {
       if (!sender.isContract) {
         this.nodes.push(new Node(transactionHash, accountColour, value));
