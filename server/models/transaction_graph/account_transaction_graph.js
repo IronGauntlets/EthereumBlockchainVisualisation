@@ -7,13 +7,13 @@ const Node = require('./node.js');
 
 const etherDenomination = 'gwei';
 
-const defaultSize = 0;
+const defaultSize = Math.log(1);
 const arrow = 'arrow';
 const contractColour = '#e3b93c';
 const accountColour = '#04c975';
 const contractCreationColour = '#80b6ad';
-const inputColour = '#015430';
-const outputColour = '#104957';
+const inputColour = '#104957';
+const outputColour = '#015430';
 
 function AccountTransactionGraph(account) {
   TransactionGraph.call(this);
@@ -38,11 +38,11 @@ AccountTransactionGraph.prototype.processTransactionsToGraph = function(transact
         this.blockNodesHashMap[transactions[i].blockHash] = true;
       }
       if (info == 'value') {
-        transactions[i].value = parseFloat(web3.fromWei(transactions[i].value, etherDenomination));
+        transactions[i].value = Math.log(parseFloat(web3.fromWei(transactions[i].value, etherDenomination)));
         this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].blockHash, transactions[i].isNew, transactions[i].value);
       }
       else {
-        this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].blockHash, transactions[i].isNew, transactions[i].gasUsed);
+        this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].blockHash, transactions[i].isNew, Math.log(transactions[i].gasUsed));
       }
     }
   }
@@ -50,32 +50,32 @@ AccountTransactionGraph.prototype.processTransactionsToGraph = function(transact
 
 AccountTransactionGraph.prototype.processTransaction = function(sender, reciever, transactionHash, blockHash, isNew, value){
   if (this.account == reciever.address) {
-    //use output colour
     if (reciever.isContract && isNew) {
-      this.nodes.push(new Node(transactionHash, contractColour, value));
+      if (sender.isContract) {this.nodes.push(new Node(transactionHash, contractColour, value));}
+      else {this.nodes.push(new Node(transactionHash, accountColour, value));}
       this.edges.push(new Edge(this.edgeCount, transactionHash, blockHash, contractCreationColour, defaultSize, arrow));this.edgeCount++;
     } else {
       if (!sender.isContract) {
         this.nodes.push(new Node(transactionHash, accountColour, value));
-        this.edges.push(new Edge(this.edgeCount, transactionHash, blockHash, outputColour, defaultSize, arrow));this.edgeCount++;
+        this.edges.push(new Edge(this.edgeCount, transactionHash, blockHash, inputColour, defaultSize, arrow));this.edgeCount++;
       } else {
         this.nodes.push(new Node(transactionHash, contractColour, value));
-        this.edges.push(new Edge(this.edgeCount, transactionHash, blockHash, outputColour, defaultSize, arrow));this.edgeCount++;
+        this.edges.push(new Edge(this.edgeCount, transactionHash, blockHash, inputColour, defaultSize, arrow));this.edgeCount++;
       }
     }
 
   } else if (this.account == sender.address) {
-    //use input colour
     if (reciever.isContract && isNew) {
-      this.nodes.push(new Node(transactionHash, contractColour, value));
+      if (sender.isContract) {this.nodes.push(new Node(transactionHash, contractColour, value));}
+      else {this.nodes.push(new Node(transactionHash, accountColour, value));}
       this.edges.push(new Edge(this.edgeCount, blockHash, transactionHash, contractCreationColour, defaultSize, arrow));this.edgeCount++;
     } else {
-      if (!sender.isContract) {
+      if (!reciever.isContract) {
         this.nodes.push(new Node(transactionHash, accountColour, value));
-        this.edges.push(new Edge(this.edgeCount, blockHash, transactionHash, inputColour, defaultSize, arrow));this.edgeCount++;
+        this.edges.push(new Edge(this.edgeCount, blockHash, transactionHash, outputColour, defaultSize, arrow));this.edgeCount++;
       } else {
         this.nodes.push(new Node(transactionHash, contractColour, value));
-        this.edges.push(new Edge(this.edgeCount, blockHash, transactionHash, inputColour, defaultSize, arrow));this.edgeCount++;
+        this.edges.push(new Edge(this.edgeCount, blockHash, transactionHash, outputColour, defaultSize, arrow));this.edgeCount++;
       }
     }
 
