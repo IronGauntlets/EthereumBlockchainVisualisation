@@ -19,6 +19,7 @@ app.use(function(req, res, next){
 
 // Send files for these requests and for testing visualisations
 app.use("/block/utils", express.static(path.join(__dirname + '/utils')));
+app.use("/account/utils", express.static(path.join(__dirname + '/utils')));
 
 // Send favicon
 app.get('/favicon.ico', function (req, res) {
@@ -43,6 +44,16 @@ app.get('/block/three_node/:id/:count', function (req, res) {
 // Resquest for 3 node multiple single block transactions using ether
 app.get('/block/three_node/:id/:count/ether', function (req, res) {
   res.sendFile(path.join(__dirname+'/visualisations/block_transactions/three_node_ether.html'))
+})
+
+// Resquest for 3 node multiple single block transactions using gas
+app.get('/account/:id/:block/:count', function (req, res) {
+  res.sendFile(path.join(__dirname+'/visualisations/account_transactions/account.html'))
+})
+
+// Resquest for 3 node multiple single block transactions using ether
+app.get('/account/:id/:block/:count/ether', function (req, res) {
+  res.sendFile(path.join(__dirname+'/visualisations/account_transactions/account_ether.html'))
 })
 
 // Start listening when running on local node

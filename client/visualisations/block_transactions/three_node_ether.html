@@ -54,14 +54,14 @@
       // minEdgeSize: 10,
       // maxEdgeSize: 10,
       scalingMode: "inside",
-      sideMargin: 2
+      sideMargin: 10
     }
 
     var forceConfig = {
       worker: true,
       barnesHutOptimize: true,
       strongGravityMode:true,
-      slowDown: 3
+      slowDown: 2
     }
 
     var s = new sigma({
@@ -73,7 +73,7 @@
     s.startForceAtlas2(forceConfig);
     setTimeout(function() {
       s.stopForceAtlas2();
-    },180000);
+    },240000);
   }
 
   </script>

@@ -34,9 +34,6 @@ app.use('/' + apiPrefix + '/account', account);
 const block = require('./controllers/block.js');
 app.use('/' + apiPrefix + '/block', block);
 
-const transaction = require('./controllers/transaction.js');
-app.use('/' + apiPrefix + '/transaction', transaction);
-
 const blockchain = require('./controllers/blockchain.js');
 app.use('/' + apiPrefix + '/blockchain', blockchain);
 
