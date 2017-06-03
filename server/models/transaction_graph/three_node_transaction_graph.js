@@ -31,11 +31,9 @@ ThreeNodeTransactionGraph.prototype.processTransactionsToGraph = function(transa
       } else {
         transactions[i].value = Math.log(parseFloat(web3.fromWei(transactions[i].value, etherDenomination)/75));
       }
-      console.log('Before setting: '+transactions[i].value);
       this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].isNew, transactions[i].value);
     }
     else  {
-      console.log(Math.log(transactions[i].gasUsed/10000));
       this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].isNew, Math.log(transactions[i].gasUsed/10000));
     }
   }
