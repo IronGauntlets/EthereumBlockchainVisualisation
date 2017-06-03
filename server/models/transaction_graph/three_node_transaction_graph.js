@@ -5,8 +5,9 @@ const TransactionGraph = require('./transaction_graph.js');
 const Edge = require('./edge.js');
 const Node = require('./node.js');
 
-const etherDenomination = 'gwei';
-const defaultSize = 0;
+const etherDenomination = 'finney';
+
+const defaultSize = Math.log(1);
 const contractCreationEdgeColor = '#80b6ad';
 const transactionNodeColor = '#1b7a91';
 const accountEdgeColor = '#015430';
@@ -25,11 +26,17 @@ ThreeNodeTransactionGraph.prototype.constructor = ThreeNodeTransactionGraph;
 ThreeNodeTransactionGraph.prototype.processTransactionsToGraph = function(transactions, info) {
   for (var i = 0; i < transactions.length; i++) {
     if (info == 'value') {
-      transactions[i].value = parseFloat(web3.fromWei(transactions[i].value, etherDenomination));
+      if (parseFloat(web3.fromWei(transactions[i].value, etherDenomination)/75) < 1) {
+        transactions[i].value = Math.log(1);
+      } else {
+        transactions[i].value = Math.log(parseFloat(web3.fromWei(transactions[i].value, etherDenomination)/75));
+      }
+      console.log('Before setting: '+transactions[i].value);
       this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].isNew, transactions[i].value);
     }
     else  {
-      this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].isNew, transactions[i].gasUsed);
+      console.log(Math.log(transactions[i].gasUsed/10000));
+      this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].isNew, Math.log(transactions[i].gasUsed/10000));
     }
   }
 }
