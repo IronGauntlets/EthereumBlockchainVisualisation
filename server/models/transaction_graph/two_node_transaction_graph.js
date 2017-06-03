@@ -6,9 +6,9 @@ const Block = require('../block.js');
 const Edge = require('./edge.js');
 const Node = require('./node.js');
 
-const etherDenomination = 'gwei';
+const etherDenomination = 'mether';
 
-const defaultSize = 0;
+const defaultSize = Math.log(1);
 const arrow = 'arrow';
 const colour1 = '#125565';
 
@@ -34,7 +34,7 @@ TwoNodeTransactionGraph.prototype.processBlocks = function(blockId, count, info,
     for (var i = 0; i < this.allTransactions.length; i++) {
       var property = this.allTransactions[i].from.address + this.allTransactions[i].to.address;
       var value = this.transactionHashMap[property];
-      var percent = (value - this.range[0])/ (this.range[1] - this.range[0])
+      var percent = (value - this.range[0])/ (this.range[1] - this.range[0]);
       var edgeColour = shadeColor2(colour1, percent);
       this.processTransaction(this.allTransactions[i].from, this.allTransactions[i].to, edgeColour);
     }
@@ -47,11 +47,11 @@ TwoNodeTransactionGraph.prototype.processTransactionsToGraph = function(transact
     var check = transactions[i].from.address + transactions[i].to.address;
     if (this.transactionHashMap.hasOwnProperty(check)) {
       if (info == 'value') {
-        transactions[i].value = parseInt(web3.fromWei(transactions[i].value), etherDenomination);
+        transactions[i].value = parseFloat(web3.fromWei(transactions[i].value, etherDenomination));
         this.transactionHashMap[check] = this.transactionHashMap[check] + transactions[i].value;
       }
       else {
-        this.transactionHashMap[check] = this.transactionHashMap[check] + transactions[i].gasUsed;
+        this.transactionHashMap[check] = this.transactionHashMap[check] + transactions[i].gasUsed/100000;
       }
     } else {
       this.allTransactions.push({
@@ -59,11 +59,11 @@ TwoNodeTransactionGraph.prototype.processTransactionsToGraph = function(transact
         to : transactions[i].to
       })
       if (info == 'value') {
-        transactions[i].value = parseInt(web3.fromWei(transactions[i].value), etherDenomination);
-        this.transactionHashMap[check] = transactions[i].value;
+        transactions[i].value = parseFloat(web3.fromWei(transactions[i].value, etherDenomination));
+        this.transactionHashMap[check] = (transactions[i].value);
       }
       else {
-        this.transactionHashMap[check] = transactions[i].gasUsed;
+        this.transactionHashMap[check] = transactions[i].gasUsed/100000;
       }
     }
   }
@@ -83,6 +83,13 @@ TwoNodeTransactionGraph.prototype.deleteProperties = function() {
 }
 
 function range(hashMap) {
+  for (var hash in hashMap) {
+    if (hashMap[hash] == 0 ) {
+      hashMap[hash] = Math.log(1);
+    } else {
+      hashMap[hash] = Math.log(hashMap[hash]);
+    }
+  }
   var lowest = hashMap[Object.getOwnPropertyNames(hashMap)[0]];
   var highest = hashMap[Object.getOwnPropertyNames(hashMap)[0]];
   for (var hash in hashMap) {

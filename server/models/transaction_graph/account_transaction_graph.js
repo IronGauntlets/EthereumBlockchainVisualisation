@@ -5,7 +5,7 @@ const TransactionGraph = require('./transaction_graph.js');
 const Edge = require('./edge.js');
 const Node = require('./node.js');
 
-const etherDenomination = 'gwei';
+const etherDenomination = 'finney';
 
 const defaultSize = Math.log(1);
 const arrow = 'arrow';
@@ -38,11 +38,17 @@ AccountTransactionGraph.prototype.processTransactionsToGraph = function(transact
         this.blockNodesHashMap[transactions[i].blockHash] = true;
       }
       if (info == 'value') {
-        transactions[i].value = Math.log(parseFloat(web3.fromWei(transactions[i].value, etherDenomination)));
+        if (parseFloat(web3.fromWei(transactions[i].value, etherDenomination)/75) < 1) {
+          transactions[i].value = Math.log(1);
+        } else {
+          transactions[i].value = Math.log(parseFloat(web3.fromWei(transactions[i].value, etherDenomination)/75));
+        }
+        console.log('Before setting: '+transactions[i].value);
         this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].blockHash, transactions[i].isNew, transactions[i].value);
       }
-      else {
-        this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].blockHash, transactions[i].isNew, Math.log(transactions[i].gasUsed));
+      else  {
+        console.log(Math.log(transactions[i].gasUsed/10000));
+        this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].blockHash, transactions[i].isNew, Math.log(transactions[i].gasUsed/10000));
       }
     }
   }
@@ -86,6 +92,7 @@ AccountTransactionGraph.prototype.deleteProperties = function() {
   TransactionGraph.prototype.deleteProperties.call(this);
   delete this.edgeCount;
   delete this.colourHashMap;
+  delete this.blockNodesHashMap;
 }
 
 function randomColour() {

@@ -1,12 +1,12 @@
 const Web3 = require('web3');
 // Change address accordingly
-const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.47.31:8545"));
+const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.44.233:8545"));
 
 const mongoClient = require('mongodb').MongoClient;
-const mongoURL = 'mongodb://localhost:27017/ethereum_blockchain';
+const mongoURL = 'mongodb://146.169.46.80:27017/ethereum_blockchain';
 const mongodbCollection = 'blocks2';
 
-var blcNum = 1000000;
+var blcNum = 2000000;
 var count  = 1000000;
 
 getBlocks(blcNum, count, ()=> {
