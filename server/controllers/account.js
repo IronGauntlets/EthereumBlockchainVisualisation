@@ -15,8 +15,8 @@ router.get('/:id/:block/:count/ether', function(req, res) {
 
 function jsonCallback(graph, response, request) {
   graph.deleteProperties();
-  response.json(graph);
   console.log('Sending response for ' + request.method +' for URI: ' + request.url + ' at ' + new Date().toUTCString());
+  response.json(graph);
 }
 
 module.exports = router;
