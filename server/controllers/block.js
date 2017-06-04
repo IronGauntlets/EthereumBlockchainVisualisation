@@ -1,5 +1,7 @@
 const express  = require('express');
 const router = express.Router();
+const path = require('path');
+const fs = require("fs");
 
 const ToGraphML = require('./graphml_creator.js');
 const TwoNodeTransactionGraph = require('../models/transaction_graph/two_node_transaction_graph.js');
@@ -55,16 +57,34 @@ router.get('/three_node/:id/:count/ether/graphml', function(req, res) {
 
 function jsonCallback(graph, response, request) {
   graph.deleteProperties();
-  response.json(graph);
   console.log('Sending response for ' + request.method +' for URI: ' + request.url + ' at ' + new Date().toUTCString());
+  response.json(graph);
 }
 
 function graphMLCallback(graph, response, request, directed) {
   graph.deleteProperties();
   var toGraphMl = new ToGraphML(graph, directed);
   toGraphMl.create();
-  response.header('Content-Type','text/xml').send(toGraphMl.graphml);
-  console.log('Sending response for ' + request.method +' for URI: ' + request.url + ' at ' + new Date().toUTCString());
+  var filePath = path.join(__dirname + '/' + request.params.id + '_' + request.params.count + '.graphml');
+  var fileName = '' + request.params.id + '_' + request.params.count + '.graphml';
+
+  fs.writeFile(filePath, toGraphMl.graphml, (err) => {
+    if (err) {console.error('Write error' + err);}
+    else {
+      console.log("Data written successfully!");
+      response.setHeader('Content-Disposition', 'attachment; filename=' + fileName);
+      console.log('Sending response for ' + request.method +' for URI: ' + request.url + ' at ' + new Date().toUTCString());
+      response.sendFile(filePath , (err) => {
+        if (err) {console.error('Send error' + err);}
+        else {
+          fs.unlink(filePath, function(err) {
+            if (err) {return console.error('Delete error' + err);}
+            console.log(fileName + " deleted successfully!");
+          });
+        }
+      });
+    }
+  });
 }
 
 module.exports = router;
