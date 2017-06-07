@@ -59,7 +59,7 @@ app.get('/block/three_node/:id/:count/ether', function (req, res) {
   res.sendFile(path.join(__dirname+'/visualisations/block_transactions/three_node_ether.html'));
 })
 
-app.get('/block/three_node/:id/:count/ethe/gdo', function (req, res) {
+app.get('/block/three_node/:id/:count/ether/gdo', function (req, res) {
   res.sendFile(path.join(__dirname+'/visualisations/block_transactions/three_node_ether_gdo.html'));
 })
 
