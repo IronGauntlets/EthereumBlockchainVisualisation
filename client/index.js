@@ -33,7 +33,7 @@ app.get('/block/two_node/:id/:count', function (req, res) {
 })
 
 app.get('/block/two_node/:id/:count/gdo', function (req, res) {
-  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/two_node/gdo.html'));
+  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/two_node_gdo.html'));
 })
 
 // Resquest for 2 node multiple single block transactions using ether
