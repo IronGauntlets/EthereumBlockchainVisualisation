@@ -32,14 +32,25 @@ app.get('/block/two_node/:id/:count', function (req, res) {
   res.sendFile(path.join(__dirname+'/visualisations/block_transactions/two_node.html'))
 })
 
+app.get('/block/two_node/:id/:count/gdo', function (req, res) {
+  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/two_node/gdo.html'))
+})
+
 // Resquest for 2 node multiple single block transactions using ether
 app.get('/block/two_node/:id/:count/ether', function (req, res) {
   res.sendFile(path.join(__dirname+'/visualisations/block_transactions/two_node_ether.html'))
 })
 
+app.get('/block/two_node/:id/:count/ether/gdo', function (req, res) {
+  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/two_node_ether_gdo.html'))
+
 // Resquest for 3 node multiple single block transactions using gas
 app.get('/block/three_node/:id/:count', function (req, res) {
   res.sendFile(path.join(__dirname+'/visualisations/block_transactions/three_node.html'))
+})
+
+app.get('/block/three_node/:id/:count'/gdo, function (req, res) {
+  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/three_node_gdo.html'))
 })
 
 // Resquest for 3 node multiple single block transactions using ether
@@ -47,14 +58,27 @@ app.get('/block/three_node/:id/:count/ether', function (req, res) {
   res.sendFile(path.join(__dirname+'/visualisations/block_transactions/three_node_ether.html'))
 })
 
+app.get('/block/three_node/:id/:count/ethe/gdor', function (req, res) {
+  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/three_node_ether_gdo.html'))
+})
+
 // Resquest for 3 node multiple single block transactions using gas
 app.get('/account/:id/:block/:count', function (req, res) {
   res.sendFile(path.join(__dirname+'/visualisations/account_transactions/account.html'))
 })
 
+// Resquest for 3 node multiple single block transactions using gas
+app.get('/account/:id/:block/:count/gdo' function (req, res) {
+  res.sendFile(path.join(__dirname+'/visualisations/account_transactions/account_gdo.html'))
+})
+
 // Resquest for 3 node multiple single block transactions using ether
 app.get('/account/:id/:block/:count/ether', function (req, res) {
   res.sendFile(path.join(__dirname+'/visualisations/account_transactions/account_ether.html'))
+})
+
+app.get('/account/:id/:block/:count/ether/gdo', function (req, res) {
+  res.sendFile(path.join(__dirname+'/visualisations/account_transactions/account_ether_god.html'))
 })
 
 // Resquest for 3 node multiple single block transactions using ether

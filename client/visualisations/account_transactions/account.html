@@ -6,56 +6,19 @@
   <title>Block Transactions</title>
   <style type="text/css">
   body {
-    background-color: #0B1719;
+    margin: 0;
   }
-
-  p, h3 {
-    margin: 2px;
-  }
-
-  h1, h3, p {
-    color: #20b2aa;
-    font-family: arial, sans-serif;
-  }
-
-  h1 {
-    margin-bottom: 0px;
-  }
-
-  h1, #author {
-    display:flex;
-    justify-content:center;
-    align-items:center;
-  }
-
   #container {
     position: absolute;
     width: 100%;
     height: 100%;
-    margin-left: 850px;
+    background-color: #0F1D20;
   }
-
-  #graph_container {
-    position: relative;
-    top: 20px;
-    height: 4100px;
-    width: 4100px;
-  }
-
   </style>
 </head>
 
 <body>
-  <div class="information">
-    <h1 id='title'>ETHEREUM TRANSACTIONS</h1>
-    <h3 id='author'>Aneeque Safdar and David Birch</h3>
-    <p id='info1'></p>
-    <p id='info2'></p>
-  </div>
-
-  <div id='graph_container'>
-    <div id='container'></div>
-  </div>
+  <div id='container'></div>
 
   <script type="text/javascript" src='../../utils/external_libs/sigmajs/sigma.min.js'></script>
   <script type="text/javascript" src='../../utils/external_libs/sigmajs/plugins/sigma.parsers.json.min.js'></script>
@@ -86,11 +49,6 @@
   })
 
   function createGraph(g, container) {
-    var renderer = {
-      container: container,
-      type: 'canvas'
-    }
-
     var graphSettings = {
       minNodeSize: 1.5,
       maxNodeSize: 3.5,
@@ -104,13 +62,12 @@
       worker: true,
       barnesHutOptimize: true,
       strongGravityMode:true,
-      startingIterations: 50,
       slowDown: 2
     }
 
     var s = new sigma({
       graph: g,
-      renderer: renderer,
+      container: container,
       settings: graphSettings
     })
     //Start Force Atlas algorithm
