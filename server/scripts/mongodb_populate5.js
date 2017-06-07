@@ -9,10 +9,6 @@ const mongodbCollection = 'blocks2';
 var blcNum = 500000;
 var count  = 500000;
 
-getBlocks(blcNum, count, ()=> {
-  console.log('done');
-});
-
 getBlocksRecursively(blcNum, count, ()=> {
   console.log('done');
 });
