@@ -13,32 +13,9 @@ getBlocks(blcNum, count, ()=> {
   console.log('done');
 });
 
-function getBlocks(id, count, callback) {
-  var newId = parseInt(id);
-  mongoClient.connect(mongoURL, (err, db) => {
-    if (err) {console.log('Unable to connet to MongoDB', err);}
-    else {console.log(); console.log('getBlocks: Connected successfully to the server');
-      var blocksCollection = db.collection(mongodbCollection);
-      var query = {number: {$lte: newId, $gt: (newId - count)}};
-      blocksCollection.find(query).toArray((err, docs) => {
-        if (count - docs.length == 0) {
-          db.close();
-          console.log('getBlocks: Closed MongoDB connection');
-          callback();
-        } else {
-          getBlocksRecursively(newId, count, () => {
-            console.log();
-            console.log('length of block array: '+docs.length);
-            db.close();
-            console.log();
-            console.log('getBlocks: Closed MongoDB connection');
-            callback();
-          });
-        }
-      });
-    }
-  })
-}
+getBlocksRecursively(blcNum, count, ()=> {
+  console.log('done');
+});
 
 function getBlocksRecursively(id, count, callback) {
   if (count > 0) {

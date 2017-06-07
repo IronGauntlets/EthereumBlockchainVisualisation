@@ -73,6 +73,8 @@ function graphMLCallback(graph, response, request, directed) {
     else {
       console.log("Data written successfully!");
       response.setHeader('Content-Disposition', 'attachment; filename=' + fileName);
+      response.setHeader('Content-Transfer-Encoding', 'binary');
+      response.setHeader('Content-Type', 'application/octet-stream');
       console.log('Sending response for ' + request.method +' for URI: ' + request.url + ' at ' + new Date().toUTCString());
       response.sendFile(filePath , (err) => {
         if (err) {console.error('Send error' + err);}
