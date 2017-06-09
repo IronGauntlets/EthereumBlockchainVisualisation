@@ -71,7 +71,7 @@ TwoNodeTransactionGraph.prototype.processTransactionsToGraph = function(transact
 
 TwoNodeTransactionGraph.prototype.processTransaction = function(sender, reciever, colour) {
   TransactionGraph.prototype.processTransaction.call(this, sender, reciever);
-  this.edges.push(new Edge(this.edgeCount, sender.address, reciever.address, colour, defaultSize, arrow)); this.edgeCount++;
+  this.edges.push(new Edge(this.edgeCount++, sender.address, reciever.address, colour, defaultSize, arrow));
 }
 
 TwoNodeTransactionGraph.prototype.deleteProperties = function() {
