@@ -47,15 +47,15 @@ ThreeNodeTransactionGraph.prototype.processTransaction = function(sender, reciev
 
 ThreeNodeTransactionGraph.prototype.createEdges = function(hash, source, target, isTransactionNew) {
   if (target.isContract && isTransactionNew) {
-    this.edges.push(new Edge(this.edgeCount, source.address, hash, contractCreationEdgeColor, defaultSize, null)); this.edgeCount++;
-    this.edges.push(new Edge(this.edgeCount, hash, target.address, contractCreationEdgeColor, defaultSize, null)); this.edgeCount++;
+    this.edges.push(new Edge(this.edgeCount++, source.address, hash, contractCreationEdgeColor, defaultSize, null));
+    this.edges.push(new Edge(this.edgeCount++, hash, target.address, contractCreationEdgeColor, defaultSize, null));
   } else {
     if (!source.isContract) {
-      this.edges.push(new Edge(this.edgeCount, source.address, hash, accountEdgeColor, defaultSize, null)); this.edgeCount++;
-      this.edges.push(new Edge(this.edgeCount, hash, target.address, transactionEdgeColor, defaultSize, null)); this.edgeCount++;
+      this.edges.push(new Edge(this.edgeCount++, source.address, hash, accountEdgeColor, defaultSize, null));
+      this.edges.push(new Edge(this.edgeCount++, hash, target.address, transactionEdgeColor, defaultSize, null));
     } else {
-      this.edges.push(new Edge(this.edgeCount, source.address, hash, contractEdgeColor, defaultSize, null)); this.edgeCount++;
-      this.edges.push(new Edge(this.edgeCount, hash, target.address, transactionEdgeColor, defaultSize, null)); this.edgeCount++;
+      this.edges.push(new Edge(this.edgeCount++, source.address, hash, contractEdgeColor, defaultSize, null));
+      this.edges.push(new Edge(this.edgeCount++, hash, target.address, transactionEdgeColor, defaultSize, null));
     }
   }
 }

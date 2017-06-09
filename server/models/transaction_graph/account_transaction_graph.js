@@ -57,14 +57,14 @@ AccountTransactionGraph.prototype.processTransaction = function(sender, reciever
     if (reciever.isContract && isNew) {
       if (sender.isContract) {this.nodes.push(new Node(transactionHash, contractColour, value));}
       else {this.nodes.push(new Node(transactionHash, accountColour, value));}
-      this.edges.push(new Edge(this.edgeCount, transactionHash, blockHash, contractCreationColour, defaultSize, arrow));this.edgeCount++;
+      this.edges.push(new Edge(this.edgeCount++, transactionHash, blockHash, contractCreationColour, defaultSize, arrow));
     } else {
       if (!sender.isContract) {
         this.nodes.push(new Node(transactionHash, accountColour, value));
-        this.edges.push(new Edge(this.edgeCount, transactionHash, blockHash, inputColour, defaultSize, arrow));this.edgeCount++;
+        this.edges.push(new Edge(this.edgeCount++, transactionHash, blockHash, inputColour, defaultSize, arrow));
       } else {
         this.nodes.push(new Node(transactionHash, contractColour, value));
-        this.edges.push(new Edge(this.edgeCount, transactionHash, blockHash, inputColour, defaultSize, arrow));this.edgeCount++;
+        this.edges.push(new Edge(this.edgeCount++, transactionHash, blockHash, inputColour, defaultSize, arrow));
       }
     }
 
@@ -72,14 +72,14 @@ AccountTransactionGraph.prototype.processTransaction = function(sender, reciever
     if (reciever.isContract && isNew) {
       if (sender.isContract) {this.nodes.push(new Node(transactionHash, contractColour, value));}
       else {this.nodes.push(new Node(transactionHash, accountColour, value));}
-      this.edges.push(new Edge(this.edgeCount, blockHash, transactionHash, contractCreationColour, defaultSize, arrow));this.edgeCount++;
+      this.edges.push(new Edge(this.edgeCount++, blockHash, transactionHash, contractCreationColour, defaultSize, arrow));
     } else {
       if (!reciever.isContract) {
         this.nodes.push(new Node(transactionHash, accountColour, value));
-        this.edges.push(new Edge(this.edgeCount, blockHash, transactionHash, outputColour, defaultSize, arrow));this.edgeCount++;
+        this.edges.push(new Edge(this.edgeCount++, blockHash, transactionHash, outputColour, defaultSize, arrow));
       } else {
         this.nodes.push(new Node(transactionHash, contractColour, value));
-        this.edges.push(new Edge(this.edgeCount, blockHash, transactionHash, outputColour, defaultSize, arrow));this.edgeCount++;
+        this.edges.push(new Edge(this.edgeCount++, blockHash, transactionHash, outputColour, defaultSize, arrow));
       }
     }
 
