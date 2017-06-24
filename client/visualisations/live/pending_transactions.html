@@ -34,16 +34,20 @@
     web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.46.124:8545"));
   }
 
-  setTimeout(function(){
-    f.stopWatching(()=>{
-      console.log('STOPPED');
-    });
-  }, 900000);
+  // setTimeout(function(){
+  //   pendingTxs.stopWatching(()=>{
+  //     console.log('STOPPED');
+  //   });
+  //   newBlocks.stopWatching(()=>{
+  //     console.log('STOPPED');
+  //   });
+  // }, 180000);
 
   var txQueue = [];
   var edgeCount = 0;
   var nodeCount = 0;
   var nodesHashMap = {};
+  var transactionsHashMap = {};
 
   const etherDenomination = 'finney';
 
@@ -56,11 +60,13 @@
   const contractNodeColor = '#e3b93c';
   const accountNodeColor = '#04c975';
 
+  var processingBlock = false;
+
   var forceConfig = {
     worker: true,
     barnesHutOptimize: true,
     strongGravityMode:true,
-    slowDown: 7
+    slowDown: 2
   }
 
   var graphSettings = {
@@ -77,61 +83,99 @@
     settings: graphSettings
   })
 
-  var f = web3.eth.filter('pending');
-  f.watch((err, txHash)=>{
-    console.log('New Transaction');
-    console.log('TxQueue length: ' + txQueue.length);
-    if (txQueue.length == 0) {
-      txQueue.push(txHash);
+  var pendingTxs = web3.eth.filter('pending');
+  var newBlocks = web3.eth.filter('latest');
+
+  pendingTxs.watch((err, txHash)=>{
+    console.log('New Transaction, TxQueue length: ' + txQueue.length + ', processingBlock: ' + processingBlock);
+    txQueue.push(txHash);
+    if (!processingBlock) {
       startProcessing();
-    } else {
-      txQueue.push(txHash);
     }
   })
 
+  newBlocks.watch((err, block)=>{
+    processingBlock = true;
+    console.log('New Block');
+    block = web3.eth.getBlock(block);
+    for (var i = 0; i < block.transactions.length; i++) {
+      removeTransaction(block.transactions[i]);
+    }
+    processingBlock = false;
+    s.refresh();
+  })
+
+  function removeTransaction(txHash) {
+    if (transactionsHashMap.hasOwnProperty(txHash)) {
+      s.graph.dropNode(txHash);
+      var sender = transactionsHashMap[txHash][0];
+      var reciever = transactionsHashMap[txHash][1];
+
+      if (sender != null && s.graph.degree(sender) < 2) {
+        s.graph.dropNode(sender);
+        delete nodesHashMap[sender];
+      }
+      if (reciever != null && s.graph.degree(reciever) < 2) {
+        s.graph.dropNode(reciever);
+        delete nodesHashMap[reciever];
+      }
+      if (s.isForceAtlas2Running()) {
+        s.killForceAtlas2();
+      }
+      s.startForceAtlas2(forceConfig);
+    }
+  }
+
   function startProcessing() {
-    while (txQueue.length > 0 ) {
+    while (!processingBlock && txQueue.length > 0) {
       processTransaction(txQueue.shift());
     }
+    
+    if (s.isForceAtlas2Running()) {
+      s.killForceAtlas2();
+    }
+    s.startForceAtlas2(forceConfig);
   }
 
   function processTransaction(transactionHash) {
     //Get transaction
     var tx = web3.eth.getTransaction(transactionHash);
 
-    //Update the transaction
-    updateTransaction(tx);
+    if (tx != null) {
+      //Update the transaction
+      updateTransaction(tx);
 
-    //Start processing
-    if (parseFloat(web3.fromWei(tx.value, etherDenomination)/75) < 1) {
-      tx.value = Math.log(1);
+      //Start processing
+      if (parseFloat(web3.fromWei(tx.value, etherDenomination)/75) < 1) {
+        tx.value = Math.log(1);
+      } else {
+        tx.value = Math.log(parseFloat(web3.fromWei(tx.value, etherDenomination)/75));
+      }
+
+      var senderInNodes = contains(tx.from.address);
+      var recieverInNodes = contains(tx.to.address);
+
+      if (tx.from.address === tx.to.address) {
+        if (!senderInNodes) s.graph.addNode(createNode(tx.from));
+      }  else {
+        if (!senderInNodes && !recieverInNodes) {
+          s.graph.addNode(createNode(tx.from));
+          s.graph.addNode(createNode(tx.to));
+        }
+        else {
+          if (!senderInNodes && recieverInNodes) s.graph.addNode(createNode(tx.from));
+          if (!recieverInNodes && senderInNodes) s.graph.addNode(createNode(tx.to));
+        }
+      }
+
+      s.graph.addNode(new Node(tx.hash, transactionNodeColor, tx.value));
+      transactionsHashMap[tx.hash] = [tx.from.address, tx.to.address];
+      createEdges(tx.hash, tx.from, tx.to, tx.isNew);
+
+      s.refresh();
     } else {
-      tx.value = Math.log(parseFloat(web3.fromWei(tx.value, etherDenomination)/75));
+      console.log("Transaction is null: " + tx);
     }
-
-    var senderInNodes = contains(tx.from.address);
-    var recieverInNodes = contains(tx.to.address);
-
-    if (tx.from.address === tx.to.address) {
-      if (!senderInNodes) s.graph.addNode(createNode(tx.from));
-    }  else {
-      if (!senderInNodes && !recieverInNodes) {
-        s.graph.addNode(createNode(tx.from));
-        s.graph.addNode(createNode(tx.to));
-      }
-      else {
-        if (!senderInNodes && recieverInNodes) s.graph.addNode(createNode(tx.from));
-        if (!recieverInNodes && senderInNodes) s.graph.addNode(createNode(tx.to));
-      }
-    }
-
-    s.graph.addNode(new Node(tx.hash, transactionNodeColor, tx.value));
-    createEdges(tx.hash, tx.from, tx.to, tx.isNew);
-
-    if (s.isForceAtlas2Running()) {
-      s.killForceAtlas2();
-    }
-    s.startForceAtlas2(forceConfig);
 
   }
 
