@@ -99,7 +99,12 @@
     console.log('New Block');
     block = web3.eth.getBlock(block);
     for (var i = 0; i < block.transactions.length; i++) {
-      removeTransaction(block.transactions[i]);
+      try {
+        removeTransaction(block.transactions[i]);
+      } catch (e) {
+        console.log(e);
+        continue;
+      }
     }
     processingBlock = false;
     s.refresh();
@@ -107,7 +112,6 @@
 
   function removeTransaction(txHash) {
     if (transactionsHashMap.hasOwnProperty(txHash)) {
-      s.graph.dropNode(txHash);
       var sender = transactionsHashMap[txHash][0];
       var reciever = transactionsHashMap[txHash][1];
 
@@ -119,6 +123,9 @@
         s.graph.dropNode(reciever);
         delete nodesHashMap[reciever];
       }
+      s.graph.dropNode(txHash);
+      delete transactionsHashMap[txHash];
+
       if (s.isForceAtlas2Running()) {
         s.killForceAtlas2();
       }
@@ -130,7 +137,7 @@
     while (!processingBlock && txQueue.length > 0) {
       processTransaction(txQueue.shift());
     }
-    
+
     if (s.isForceAtlas2Running()) {
       s.killForceAtlas2();
     }
