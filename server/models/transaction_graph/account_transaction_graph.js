@@ -1,5 +1,5 @@
 const Web3 = require('web3');
-const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.47.31:8545"));
+const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.44.234:8545"));
 
 const TransactionGraph = require('./transaction_graph.js');
 const Edge = require('./edge.js');
