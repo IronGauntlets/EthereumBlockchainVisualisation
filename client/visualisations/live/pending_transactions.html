@@ -34,10 +34,20 @@
     web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.46.124:8545"));
   }
 
+  // setTimeout(function(){
+  //   pendingTxs.stopWatching(()=>{
+  //     console.log('STOPPED');
+  //   });
+  //   newBlocks.stopWatching(()=>{
+  //     console.log('STOPPED');
+  //   });
+  // }, 180000);
+
   var txQueue = [];
   var edgeCount = 0;
   var nodeCount = 0;
   var nodesHashMap = {};
+  var transactionsHashMap = {};
 
   const etherDenomination = 'finney';
 
@@ -56,7 +66,7 @@
     worker: true,
     barnesHutOptimize: true,
     strongGravityMode:true,
-    slowDown: 20
+    slowDown: 2
   }
 
   var graphSettings = {
@@ -87,44 +97,40 @@
   newBlocks.watch((err, block)=>{
     processingBlock = true;
     console.log('New Block');
-    block = web3.eth.getBlock(block, true);
+    block = web3.eth.getBlock(block);
     for (var i = 0; i < block.transactions.length; i++) {
-      try {
-        removeTransactions(block.transactions[i]);
-      } catch (e) {
-        console.log(e);
-        continue;
-      }
+      removeTransaction(block.transactions[i]);
     }
     processingBlock = false;
-
     s.refresh();
-    if (s.isForceAtlas2Running()) {
-      s.killForceAtlas2();
-    }
-    s.startForceAtlas2(forceConfig);
   })
 
-  function removeTransactions(tx) {
-    s.graph.dropNode(tx.hash);
+  function removeTransaction(txHash) {
+    if (transactionsHashMap.hasOwnProperty(txHash)) {
+      s.graph.dropNode(txHash);
+      var sender = transactionsHashMap[txHash][0];
+      var reciever = transactionsHashMap[txHash][1];
 
-    if (tx.from != null && s.graph.degree(tx.from) < 2) {
-      s.graph.dropNode(tx.from);
-      delete nodesHashMap[tx.from];
+      if (sender != null && s.graph.degree(sender) < 2) {
+        s.graph.dropNode(sender);
+        delete nodesHashMap[sender];
+      }
+      if (reciever != null && s.graph.degree(reciever) < 2) {
+        s.graph.dropNode(reciever);
+        delete nodesHashMap[reciever];
+      }
+      if (s.isForceAtlas2Running()) {
+        s.killForceAtlas2();
+      }
+      s.startForceAtlas2(forceConfig);
     }
-    if (tx.to != null && s.graph.degree(tx.to) < 2) {
-      s.graph.dropNode(tx.to);
-      delete nodesHashMap[tx.to];
-    }
-    s.refresh();
   }
 
   function startProcessing() {
     while (!processingBlock && txQueue.length > 0) {
       processTransaction(txQueue.shift());
     }
-
-    s.refresh();
+    
     if (s.isForceAtlas2Running()) {
       s.killForceAtlas2();
     }
@@ -163,6 +169,7 @@
       }
 
       s.graph.addNode(new Node(tx.hash, transactionNodeColor, tx.value));
+      transactionsHashMap[tx.hash] = [tx.from.address, tx.to.address];
       createEdges(tx.hash, tx.from, tx.to, tx.isNew);
 
       s.refresh();
