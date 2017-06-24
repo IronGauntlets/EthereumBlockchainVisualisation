@@ -12,7 +12,7 @@ const contractCreationEdgeColor = '#80b6ad';
 const transactionNodeColor = '#1b7a91';
 const accountEdgeColor = '#015430';
 const contractEdgeColor = '#e3b93c';
-const transactionEdgeColor = '#104957';
+const transactionEdgeColor = '#2091AE';
 
 // Subclass for transaction graph
 function ThreeNodeTransactionGraph() {
