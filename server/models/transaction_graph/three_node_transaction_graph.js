@@ -25,6 +25,25 @@ ThreeNodeTransactionGraph.prototype.constructor = ThreeNodeTransactionGraph;
 
 ThreeNodeTransactionGraph.prototype.processTransactionsToGraph = function(transactions, info) {
   for (var i = 0; i < transactions.length; i++) {
+    if (i == 0) {
+      this.minGas = transactions[i].gasUsed;
+      this.maxGas = transactions[i].gasUsed;
+      this.minEther = parseFloat(web3.fromWei(transactions[i].value, 'ether'));
+      this.maxEther = parseFloat(web3.fromWei(transactions[i].value, 'ether'));
+    }
+
+    var gas = transactions[i].gasUsed;
+    var ether = parseFloat(web3.fromWei(transactions[i].value, 'ether'));
+
+    gas < this.minGas? this.minGas = gas : this.minGas;
+    gas > this.maxGas? this.maxGas = gas : this.maxGas;
+    this.totalGas = this.totalGas + gas;
+
+    ether < this.minEther? this.minEther = ether : this.minEther;
+    ether > this.maxEther? this.maxEther = ether : this.maxEther;
+    this.totalEther = this.totalEther + ether;
+
+
     if (info == 'value') {
       if (parseFloat(web3.fromWei(transactions[i].value, etherDenomination)/75) < 1) {
         transactions[i].value = Math.log(1);

@@ -14,19 +14,22 @@ function getBlocks(id, count, callback) {
       var blocksCollection = db.collection(mongodbCollection);
       var query = {number: {$lte: newId, $gt: (newId - count)}};
       blocksCollection.find(query).toArray((err, docs) => {
-        if (count - docs.length == 0) {
-          db.close();
-          console.log('getBlocks: Closed MongoDB connection');
-          callback(docs);
-        } else {
-          getBlocksRecursively(newId, count, [], (docs) => {
-            console.log();
-            console.log('length of block array: '+docs.length);
+        if (err) {console.log(err);}
+        else {
+          if (count - docs.length == 0) {
             db.close();
-            console.log();
             console.log('getBlocks: Closed MongoDB connection');
             callback(docs);
-          });
+          } else {
+            getBlocksRecursively(newId, count, [], (docs) => {
+              console.log();
+              console.log('length of block array: '+docs.length);
+              db.close();
+              console.log();
+              console.log('getBlocks: Closed MongoDB connection');
+              callback(docs);
+            });
+          }          
         }
       });
     }
