@@ -25,7 +25,7 @@ ThreeNodeTransactionGraph.prototype.constructor = ThreeNodeTransactionGraph;
 
 ThreeNodeTransactionGraph.prototype.processTransactionsToGraph = function(transactions, info) {
   for (var i = 0; i < transactions.length; i++) {
-    if (i == 0) {
+    if (this.minGas == 0 && this.maxGas == 0 && this.minEther == 0 && this.maxEther == 0) {
       this.minGas = transactions[i].gasUsed;
       this.maxGas = transactions[i].gasUsed;
       this.minEther = parseFloat(web3.fromWei(transactions[i].value, 'ether'));
