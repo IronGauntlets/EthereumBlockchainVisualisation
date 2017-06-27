@@ -9,13 +9,22 @@
     background-color: #0B1719;
   }
 
-  p, h3 {
+  h6 {
     margin: 2px;
   }
 
-  h1, h3, p {
+  th {
+    padding: 30px;
+  }
+
+  table {
+    float: left;
+  }
+
+  h1, h6, td, th {
     color: #20b2aa;
     font-family: arial, sans-serif;
+    font-size: 450%;
   }
 
   h1 {
@@ -32,7 +41,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    margin-left: 850px;
+    margin-left: 1000px;
   }
 
   #graph_container {
@@ -47,10 +56,73 @@
 
 <body>
   <div class="information">
-    <h1 id='title'>ETHEREUM TRANSACTIONS</h1>
-    <h3 id='author'>Aneeque Safdar and David Birch</h3>
-    <p id='info1'></p>
-    <p id='info2'></p>
+    <h1 id='title'><u>ETHEREUM TRANSACTIONS</u></h1>
+    <h6 id='author'>Aneeque Safdar and David Birch</h6>
+
+    <table>
+      <tr>
+        <th><u>Graph Information</u></th>
+      </tr>
+      <tr>
+        <td id='info1'></td>
+      </tr>
+      <tr>
+        <td id='info2'></td>
+      </tr>
+      <tr>
+        <td id='info3'></td>
+      </tr>
+      <tr>
+        <td id='info4'></td>
+      </tr>
+      <tr>
+        <td id='info5'></td>
+      </tr>
+
+      <tr>
+        <th><u>Accounts</u></th>
+      </tr>
+      <tr>
+        <td id='acc1'></td>
+      </tr>
+      <tr>
+        <td id='acc2'></td>
+      </tr>
+
+
+      <tr>
+        <th><u>Gas Consumed</u></th>
+      </tr>
+      <tr>
+        <td id='gas1'></td>
+      </tr>
+      <tr>
+        <td id='gas2'></td>
+      </tr>
+      <tr>
+        <td id='gas3'></td>
+      </tr>
+      <tr>
+        <td id='gas4'></td>
+      </tr>
+
+      <tr>
+        <th><u>Ether Transferred</u></th>
+      </tr>
+      <tr>
+        <td id='eth1'></td>
+      </tr>
+      <tr>
+        <td id='eth2'></td>
+      </tr>
+      <tr>
+        <td id='eth3'></td>
+      </tr>
+      <tr>
+        <td id='eth4'></td>
+      </tr>
+    </table>
+
   </div>
 
   <div id='graph_container'>
@@ -67,24 +139,45 @@
   var count = paths[4];
   console.log(paths);
 
-  document.getElementById('info1').innerHTML = 'Block number or hash = ' + blockNumberOrHash;
-  document.getElementById('info2').innerHTML  ='Count = ' + count;
 
   // var blockUrl = "http://localhost:3000/api/block"; //when running locally
   var blockUrl = "http://146.169.46.80:3000/api/block";
   var url = blockUrl + '/three_node' + '/' + blockNumberOrHash  + '/' + count;
+  var graph;
 
   http.get(url, function(res, err) {
     if (res != null) {
-      var graph = JSON.parse(res);
+      graph = JSON.parse(res);
       console.log(graph);
       console.log("Nodes: " + graph.nodes.length);
       console.log("Edges: " + graph.edges.length);
       createGraph(graph, 'container');
+
+      document.getElementById('info1').innerHTML = 'Starting Block number or hash = ' + blockNumberOrHash;
+      document.getElementById('info2').innerHTML = 'Starting Block Mined @ ' + graph.minedAt;;
+      document.getElementById('info3').innerHTML  ='Blocks = ' + count;
+      document.getElementById('info4').innerHTML = 'Nodes = ' + graph.nodes.length;
+      document.getElementById('info5').innerHTML  ='Edges = ' + graph.edges.length;
+
+      document.getElementById('acc1').innerHTML = 'Externally Owned Accounts = ' + graph.eoas;
+      document.getElementById('acc2').innerHTML  ='Contract Account = ' + graph.contracts;
+
+      document.getElementById('gas1').innerHTML = 'Maximum = ' + graph.maxGas;
+      document.getElementById('gas2').innerHTML  ='Minimum = ' + graph.minGas;
+      document.getElementById('gas3').innerHTML = 'Average = ' + graph.averageGas;
+      document.getElementById('gas4').innerHTML = 'Total = ' + graph.totalGas;
+
+      document.getElementById('eth1').innerHTML = 'Maximum = ' + graph.maxEther;
+      document.getElementById('eth2').innerHTML  ='Minimum = ' + graph.minEther;
+      document.getElementById('eth3').innerHTML = 'Average = ' + graph.averageEther;
+      document.getElementById('eth4').innerHTML = 'Total = ' + graph.totalEther;
+
+
     } else {
       console.error('GET ERROR: ' + err);
     }
   })
+
 
   function createGraph(g, container) {
     var renderer = {
@@ -103,7 +196,7 @@
       worker: true,
       barnesHutOptimize: true,
       strongGravityMode:true,
-      startingIterations: 50,
+      startingIterations: 100,
       slowDown: 2
     }
 
@@ -116,7 +209,7 @@
     s.startForceAtlas2(forceConfig);
     setTimeout(function() {
       s.killForceAtlas2();
-    },240000);
+    },600000);
   }
 
   </script>
