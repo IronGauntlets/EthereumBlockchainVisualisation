@@ -129,10 +129,10 @@
     <div id='container'></div>
   </div>
 
-  <script type="text/javascript" src='../../../utils/external_libs/sigmajs/sigma.min.js'></script>
-  <script type="text/javascript" src='../../../utils/external_libs/sigmajs/plugins/sigma.parsers.json.min.js'></script>
-  <script type="text/javascript" src='../../../utils/external_libs/sigmajs/plugins/sigma.layout.forceAtlas2.min.js'></script>
-  <script type="text/javascript" src='../../../utils/http.js'></script>
+  <script type="text/javascript" src='../../../../utils/external_libs/sigmajs/sigma.min.js'></script>
+  <script type="text/javascript" src='../../../../utils/external_libs/sigmajs/plugins/sigma.parsers.json.min.js'></script>
+  <script type="text/javascript" src='../../../../utils/external_libs/sigmajs/plugins/sigma.layout.forceAtlas2.min.js'></script>
+  <script type="text/javascript" src='../../../../utils/http.js'></script>
   <script type="text/javascript">
   var paths = window.location.pathname.split('/');
   var blockNumberOrHash = paths[3];
@@ -142,7 +142,7 @@
 
   // var blockUrl = "http://localhost:3000/api/block"; //when running locally
   var blockUrl = "http://146.169.46.80:3000/api/block";
-  var url = blockUrl + '/three_node' + '/' + blockNumberOrHash  + '/' + count + 'ether';
+  var url = blockUrl + '/three_node' + '/' + blockNumberOrHash  + '/' + count + '/ether';
   var graph;
 
   http.get(url, function(res, err) {
