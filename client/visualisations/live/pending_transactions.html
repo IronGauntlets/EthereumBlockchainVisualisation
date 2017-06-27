@@ -70,8 +70,12 @@
   }
 
   var graphSettings = {
+    minNodeSize: 1.5,
     maxNodeSize: 3.5,
     scalingMode: "inside",
+    hideEdgesOnMove: true,
+    labelThreshold: 100000000,
+    singleHover: true,
     sideMargin: 3
   }
 
@@ -245,6 +249,7 @@
     this.x = -0.5 + Math.random();
     this.y = -0.5 + Math.random();
     this.size = size;
+    this.label = id;
   }
 
   function Edge(id, source, target, color, size, type) {
