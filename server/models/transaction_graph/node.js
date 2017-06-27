@@ -5,6 +5,7 @@ function Node(id, color, size) {
   this.x = -0.5 + Math.random();
   this.y = -0.5 + Math.random();
   this.size = size;
+  this.label = id;
 }
 
 // Colours:
