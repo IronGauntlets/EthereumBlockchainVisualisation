@@ -8,7 +8,7 @@ const Block = require('../block.js');
 
 const etherDenomination = 'finney';
 
-const defaultSize = 0.5;
+const defaultSize = Math.log(1);
 const contractColour = '#e3b93c';
 const accountColour = '#04c975';
 const contractCreationColour = '#80b6ad';

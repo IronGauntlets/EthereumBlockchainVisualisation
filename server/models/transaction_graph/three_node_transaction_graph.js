@@ -7,7 +7,7 @@ const Node = require('./node.js');
 
 const etherDenomination = 'finney';
 
-const defaultSize = 1;
+const defaultSize = Math.log(1);
 const contractCreationEdgeColor = '#80b6ad';
 const transactionNodeColor = '#1b7a91';
 const accountEdgeColor = '#015430';
