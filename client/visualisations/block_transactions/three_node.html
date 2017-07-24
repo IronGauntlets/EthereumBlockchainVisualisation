@@ -48,18 +48,19 @@
 
   function createGraph(g, container) {
     var graphSettings = {
-      // minNodeSize: 1,
       maxNodeSize: 3.5,
-      // minEdgeSize: 10,
-      // maxEdgeSize: 10,
       scalingMode: "inside",
-      sideMargin: 10
+      hideEdgesOnMove: true,
+      labelThreshold: 100000000,
+      singleHover: true,
+      sideMargin: 3
     }
 
     var forceConfig = {
       worker: true,
       barnesHutOptimize: true,
       strongGravityMode:true,
+      startingIterations: 100,
       slowDown: 2
     }
 
