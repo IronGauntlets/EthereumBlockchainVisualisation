@@ -2,7 +2,7 @@ const Edge = require('./edge.js');
 const Node = require('./node.js');
 const Block = require('../block.js');
 
-const defaultSize = 1;
+const defaultSize = Math.log(1);
 const contractNodeColor = '#e3b93c';
 const accountNodeColor = '#04c975';
 
