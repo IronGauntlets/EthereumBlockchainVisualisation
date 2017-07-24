@@ -8,7 +8,7 @@ const Node = require('./node.js');
 
 const etherDenomination = 'mether';
 
-const defaultSize = 1;
+const defaultSize = Math.log(1);
 const arrow = 'arrow';
 const colour1 = '#125565';
 
