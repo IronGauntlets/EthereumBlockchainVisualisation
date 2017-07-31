@@ -1,0 +1,426 @@
+<!doctype html>
+
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <title>Pending Transactions (Ether)</title>
+  <style type='text/css'>
+  body {
+    background-color: #0B1719;
+  }
+
+  h6 {
+    margin: 2px;
+  }
+
+  th {
+    padding: 30px;
+  }
+
+  table {
+    float: left;
+  }
+
+  h1, h6, td, th {
+    color: #20b2aa;
+    font-family: arial, sans-serif;
+    font-size: 300%;
+  }
+
+  h1 {
+    margin-bottom: 0px;
+  }
+
+  h1, #author {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
+
+  #container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin-left: 1000px;
+  }
+
+  #graph_container {
+    position: relative;
+    top: 20px;
+    height: 4100px;
+    width: 4100px;
+  }
+  </style>
+</head>
+
+<body>
+  <div class="information">
+    <h1 id='title'><u>ETHEREUM TRANSACTIONS</u></h1>
+    <h6 id='author'>Aneeque Safdar and David Birch</h6>
+
+    <table>
+      <tr>
+        <th><u>Graph Information</u></th>
+      </tr>
+      <tr>
+        <td>Time since last block: <span id='block_time'></span></td>
+      </tr>
+      <tr>
+        <td>Average block time(sec): <span id='average_block_time'></span></td>
+      </tr>
+      <tr>
+        <td>Number of blocks since start: <span id='number_of_blocks'></span></td>
+      </tr>
+      <tr>
+        <td>Number of transactions: <span id='number_of_transactions'></span></td>
+      </tr>
+      <tr>
+        <td>Average number of transactions per block: <span id='average_number_of_transactions'></span></td>
+      </tr>
+
+      <tr>
+        <th><u>Ether</u></th>
+      </tr>
+      <tr>
+        <td>Average ether: <span id='average_ether'></span></td>
+      </tr>
+      <tr>
+        <td>Total ether: <span id='total_ether'></span></td>
+      </tr>
+    </table>
+
+  </div>
+
+  <div id='graph_container'>
+    <div id='container'></div>
+  </div>
+
+
+  <script type="text/javascript" src='../utils/external_libs/sigmajs/sigma.min.js'></script>
+  <script type="text/javascript" src='../utils/external_libs/sigmajs/plugins/sigma.parsers.json.min.js'></script>
+  <script type="text/javascript" src='../utils/external_libs/sigmajs/plugins/sigma.layout.forceAtlas2.min.js'></script>
+  <script type="text/javascript" src='../utils/external_libs/web3.min.js'></script>
+  <script type="text/javascript" src='../utils/http.js'></script>
+
+  <script type='text/javascript'>
+  if (typeof web3 !== 'undefined') {
+    web3 = new Web3(web3.currentProvider);
+  } else {
+    // set the provider you want from Web3.providers
+    web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.46.124:8545"));
+  }
+
+  // setTimeout(function(){
+  //   pendingTxs.stopWatching(()=>{
+  //     console.log('STOPPED');
+  //   });
+  //   newBlocks.stopWatching(()=>{
+  //     console.log('STOPPED');
+  //   });
+  // }, 180000);
+
+  var txQueue = [];
+  var edgeCount = 0;
+  var nodeCount = 0;
+  var nodesHashMap = {};
+  var transactionsHashMap = {};
+
+  const etherDenomination = 'finney';
+
+  const defaultSize = Math.log(1);
+  const contractCreationEdgeColor = '#80b6ad';
+  const transactionNodeColor = '#1b7a91';
+  const accountEdgeColor = '#015430';
+  const contractEdgeColor = '#e3b93c';
+  const transactionEdgeColor = '#2091AE';
+  const contractNodeColor = '#e3b93c';
+  const accountNodeColor = '#04c975';
+
+  var processingBlock = false;
+
+  var time = 0;
+  var totalTime = 0;
+  var numberOfBlocks = 0;
+  var averageBlockTime = 0;
+  var numberOfTransactions = 0;
+  var numberOfTransactionsPerBlock = 0;
+  var averageNumberOfTransactions = 0;
+  var totalEther = 0;
+  var averageEther = 0;
+
+  document.getElementById("number_of_blocks").innerHTML = numberOfBlocks;
+  document.getElementById("average_block_time").innerHTML = averageBlockTime;
+  document.getElementById("number_of_transactions").innerHTML = numberOfTransactions;
+  document.getElementById("average_number_of_transactions").innerHTML = averageNumberOfTransactions;
+
+  setInterval(() => {
+    time++;
+    totalTime++;
+    document.getElementById("block_time").innerHTML = convertSecToTime(time);
+  }, 1000);
+
+
+  var forceConfig = {
+    worker: true,
+    barnesHutOptimize: true,
+    strongGravityMode:true,
+    slowDown: 30
+  }
+
+  var graphSettings = {
+    minNodeSize: 1.5,
+    maxNodeSize: 3.5,
+    scalingMode: "inside",
+    hideEdgesOnMove: true,
+    labelThreshold: 100000000,
+    singleHover: true,
+    sideMargin: 3
+  }
+
+  var s = new sigma({
+    renderer: {
+      container: container,
+      type: 'canvas'
+    },
+    settings: graphSettings
+  })
+
+  var pendingTxs = web3.eth.filter('pending');
+  var newBlocks = web3.eth.filter('latest');
+
+  pendingTxs.watch((err, txHash)=>{
+
+    console.log('New Transaction, TxQueue length: ' + txQueue.length + ', processingBlock: ' + processingBlock);
+    txQueue.push(txHash);
+    if (!processingBlock) {
+      startProcessing();
+    }
+  })
+
+  newBlocks.watch((err, block)=>{
+    time = 0;
+    numberOfBlocks++;
+    document.getElementById("number_of_blocks").innerHTML = numberOfBlocks;
+
+    averageBlockTime = (totalTime / numberOfBlocks).toFixed(2);
+    document.getElementById("average_block_time").innerHTML = averageBlockTime;
+
+    processingBlock = true;
+    console.log('New Block');
+    block = web3.eth.getBlock(block);
+
+    numberOfTransactionsPerBlock = numberOfTransactionsPerBlock + block.transactions.length;
+    averageNumberOfTransactions = (numberOfTransactionsPerBlock / numberOfBlocks).toFixed(2);
+    document.getElementById("average_number_of_transactions").innerHTML = averageNumberOfTransactions;
+
+    for (var i = 0; i < block.transactions.length; i++) {
+      try {
+        removeTransaction(block.transactions[i]);
+      } catch (e) {
+        console.log(e);
+        continue;
+      }
+    }
+    processingBlock = false;
+    s.refresh();
+  })
+
+  function removeTransaction(txHash) {
+    if (transactionsHashMap.hasOwnProperty(txHash)) {
+      var sender = transactionsHashMap[txHash][0];
+      var reciever = transactionsHashMap[txHash][1];
+
+      if (sender != null && s.graph.degree(sender) < 2) {
+        s.graph.dropNode(sender);
+        delete nodesHashMap[sender];
+      }
+      if (reciever != null && s.graph.degree(reciever) < 2) {
+        s.graph.dropNode(reciever);
+        delete nodesHashMap[reciever];
+      }
+      s.graph.dropNode(txHash);
+      delete transactionsHashMap[txHash];
+
+      numberOfTransactions--;
+      document.getElementById("number_of_transactions").innerHTML = numberOfTransactions;
+
+      var tx = web3.eth.getTransaction(txHash);
+
+      var ether = parseFloat(web3.fromWei(tx.value, 'ether'));
+      totalEther = totalEther - ether;
+      averageEther = (totalEther/numberOfTransactions).toFixed(2);
+
+      document.getElementById("total_ether").innerHTML = totalEther;
+      document.getElementById("average_ether").innerHTML = averageEther;
+
+      if (s.isForceAtlas2Running()) {
+        s.killForceAtlas2();
+      }
+      s.startForceAtlas2(forceConfig);
+    }
+  }
+
+  function startProcessing() {
+    while (!processingBlock && txQueue.length > 0) {
+      processTransaction(txQueue.shift());
+    }
+
+    if (s.isForceAtlas2Running()) {
+      s.killForceAtlas2();
+    }
+    s.startForceAtlas2(forceConfig);
+  }
+
+  function processTransaction(transactionHash) {
+    numberOfTransactions++;
+    document.getElementById("number_of_transactions").innerHTML = numberOfTransactions;
+
+    //Get transaction
+    var tx = web3.eth.getTransaction(transactionHash);
+
+    if (tx != null) {
+      //Update the transaction
+      updateTransaction(tx);
+
+      var ether = parseFloat(web3.fromWei(tx.value, 'ether'));
+      totalEther = totalEther + ether;
+      averageEther = (totalEther/numberOfTransactions).toFixed(2);
+
+      document.getElementById("total_ether").innerHTML = totalEther;
+      document.getElementById("average_ether").innerHTML = averageEther;
+
+      //Start processing
+      if (parseFloat(web3.fromWei(tx.value, etherDenomination)/75) < 1) {
+        tx.value = Math.log(1);
+      } else {
+        tx.value = Math.log(parseFloat(web3.fromWei(tx.value, etherDenomination)/75));
+      }
+
+
+      var senderInNodes = contains(tx.from.address);
+      var recieverInNodes = contains(tx.to.address);
+
+      if (tx.from.address === tx.to.address) {
+        if (!senderInNodes) s.graph.addNode(createNode(tx.from));
+      }  else {
+        if (!senderInNodes && !recieverInNodes) {
+          s.graph.addNode(createNode(tx.from));
+          s.graph.addNode(createNode(tx.to));
+        }
+        else {
+          if (!senderInNodes && recieverInNodes) s.graph.addNode(createNode(tx.from));
+          if (!recieverInNodes && senderInNodes) s.graph.addNode(createNode(tx.to));
+        }
+      }
+
+      s.graph.addNode(new Node(tx.hash, transactionNodeColor, tx.value));
+      transactionsHashMap[tx.hash] = [tx.from.address, tx.to.address];
+      createEdges(tx.hash, tx.from, tx.to, tx.isNew);
+
+      s.refresh();
+    } else {
+      console.log("Transaction is null: " + tx);
+    }
+
+  }
+
+  // Create relative nodes
+  function createNode(senderOrReciever) {
+    if (senderOrReciever.isContract) {
+      return new Node(senderOrReciever.address, contractNodeColor, defaultSize);
+    } else {
+      return new Node(senderOrReciever.address, accountNodeColor, defaultSize);
+    }
+  }
+
+  function createEdges(hash, source, target, isTransactionNew) {
+    if (target.isContract && isTransactionNew) {
+      s.graph.addEdge(new Edge(edgeCount++, source.address, hash, contractCreationEdgeColor, defaultSize, null));
+      s.graph.addEdge(new Edge(edgeCount++, hash, target.address, contractCreationEdgeColor, defaultSize, null));
+    } else {
+      if (!source.isContract) {
+        s.graph.addEdge(new Edge(edgeCount++, source.address, hash, accountEdgeColor, defaultSize, null));
+        s.graph.addEdge(new Edge(edgeCount++, hash, target.address, transactionEdgeColor, defaultSize, null));
+      } else {
+        s.graph.addEdge(new Edge(edgeCount++, source.address, hash, contractEdgeColor, defaultSize, null));
+        s.graph.addEdge(new Edge(edgeCount++, hash, target.address, transactionEdgeColor, defaultSize, null));
+      }
+    }
+  }
+
+  function updateTransaction(transaction) {
+    var newSender = {
+      address: transaction.from,
+      isContract: isContract(transaction.from)
+    }
+    var newReciever;
+
+    transaction.value = transaction.value.toString(10);
+    transaction.gasPrice = transaction.gasPrice.toString(10);
+    transaction.isNew = false;
+
+    //When a transaction is a contract creation
+    if (transaction.to == null) {
+      newReciever = {
+        address: nodeCount++,
+        isContract: true
+      }
+      transaction.isNew = true;
+    } else {
+      newReciever = {
+        address: transaction.to,
+        isContract: isContract(transaction.to)
+      }
+    }
+
+    transaction.from = newSender;
+    transaction.to = newReciever;
+  }
+
+  function Node(id, color, size) {
+    this.id = id;
+    this.color = color;
+    this.x = -0.5 + Math.random();
+    this.y = -0.5 + Math.random();
+    this.size = size;
+    this.label = id;
+  }
+
+  function Edge(id, source, target, color, size, type) {
+    this.id = id;
+    this.source = source;
+    this.target = target;
+    this.color = color;
+    this.size = size;
+    this.type = type;
+  }
+
+  function isContract(addr) {
+    var code = web3.eth.getCode(addr);
+    if (code === '0x') {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  // Required to test for duplicates
+  function contains(senderOrReciever) {
+    if (nodesHashMap.hasOwnProperty(senderOrReciever)) {
+      return true
+    } else {
+      nodesHashMap[senderOrReciever] = true;
+      return false
+    }
+  }
+
+  function convertSecToTime(x) {
+    secs = x % 60;
+    mins = Math.floor(x/60)%60;
+    hours = Math.floor(x/3600);
+    return hours + ":" + mins + ":" + secs;
+  }
+  </script>
+
+</body>
+</html>
