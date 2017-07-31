@@ -87,6 +87,10 @@ app.get('/live/pending_transactions', function (req, res) {
   res.sendFile(path.join(__dirname+'/visualisations/live/pending_transactions.html'));
 })
 
+app.get('/live/pending_transactions/gdo', function (req, res) {
+  res.sendFile(path.join(__dirname+'/visualisations/live/pending_transactions_gdo.html'));
+})
+
 // Start listening when running on local node
 var server = app.listen(8000, '0.0.0.0', function(){
   var host = server.address().address;
