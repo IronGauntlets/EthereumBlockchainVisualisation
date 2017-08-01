@@ -250,7 +250,7 @@
       totalEther = totalEther - ether;
       averageEther = (totalEther/numberOfTransactions).toFixed(2);
 
-      document.getElementById("total_ether").innerHTML = totalEther;
+      document.getElementById("total_ether").innerHTML = totalEther.toFixed(2);
       document.getElementById("average_ether").innerHTML = averageEther;
 
       if (s.isForceAtlas2Running()) {
@@ -286,7 +286,7 @@
       totalEther = totalEther + ether;
       averageEther = (totalEther/numberOfTransactions).toFixed(2);
 
-      document.getElementById("total_ether").innerHTML = totalEther;
+      document.getElementById("total_ether").innerHTML = totalEther.toFixed(2);
       document.getElementById("average_ether").innerHTML = averageEther;
 
       //Start processing
