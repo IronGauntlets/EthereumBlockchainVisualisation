@@ -6,30 +6,6 @@ const ToGraphML = require('./graphml_creator.js');
 const TwoNodeTransactionGraph = require('../models/transaction_graph/two_node_transaction_graph.js');
 const ThreeNodeTransactionGraph = require('../models/transaction_graph/three_node_transaction_graph.js');
 
-//Return multiple block according to the count requested for two node using gas
-router.get('/two_node/:id/:count', function(req, res) {
-  var twoNodeGraph = new TwoNodeTransactionGraph();
-  twoNodeGraph.processBlocks(req.params.id, req.params.count, null, jsonCallback, res, req);
-})
-
-//Return multiple block according to the count requested for two node using gas in graphml
-router.get('/two_node/:id/:count/graphml', function(req, res) {
-  var twoNodeGraph = new TwoNodeTransactionGraph();
-  twoNodeGraph.processBlocks(req.params.id, req.params.count, null, graphMLCallback, res, req, true);
-})
-
-//Return multiple block according to the count requested for two node using ether
-router.get('/two_node/:id/:count/ether', function(req, res) {
-  var twoNodeGraph = new TwoNodeTransactionGraph();
-  twoNodeGraph.processBlocks(req.params.id, req.params.count, 'value', jsonCallback, res, req);
-})
-
-//Return multiple block according to the count requested for two node using ether in graphml
-router.get('/two_node/:id/:count/ether/graphml', function(req, res) {
-  var twoNodeGraph = new TwoNodeTransactionGraph();
-  twoNodeGraph.processBlocks(req.params.id, req.params.count, 'value', graphMLCallback, res, req, true);
-})
-
 //Return multiple block according to the count requested for three node using gas
 router.get('/three_node/:id/:count', function(req, res) {
   var threeNodeGraph = new ThreeNodeTransactionGraph();
