@@ -2,12 +2,9 @@ var paths = window.location.pathname.split('/');
 var account = paths[2];
 var blockNumberOrHash = paths[3];
 var count = paths[4];
-console.log(paths);
-
 var isEther = false;
 
 for (var i = 0; i < paths.length; i++) {
-  console.log('Checking for \'ether\' in paths');
   if (paths[i] === 'ether') {
     isEther = true;
   }
@@ -36,8 +33,6 @@ http.get(url, function(res, err) {
 
 function createGraph(g, container) {
   var graphSettings = {
-    minNodeSize: 1.5,
-    maxNodeSize: 3.5,
     scalingMode: "inside",
     hideEdgesOnMove: true,
     labelThreshold: 100000000,
@@ -47,12 +42,37 @@ function createGraph(g, container) {
 
   var forceConfig = {
     worker: true,
-    barnesHutOptimize: true,
-    strongGravityMode:false,
-    gravity: 10,
-    scalingRatio: 0.08,
     startingIterations: 200,
-    slowDown: 5
+    slowDown: 4
+  }
+
+  if (isEther) {
+    graphSettings.minNodeSize = 1;
+    graphSettings.maxNodeSize = 2;
+  } else {
+    graphSettings.minNodeSize = 1;
+    graphSettings.maxNodeSize = 1.7;
+  }
+
+  if (g.nodes.length < 1000) {
+    forceConfig.strongGravityMode = true;
+  } else {
+    forceConfig.barnesHutOptimize = true;
+
+    if (g.nodes.length < 5000) {
+      forceConfig.gravity = 100;
+      forceConfig.scalingRatio = 7.25;
+    } else if (g.nodes.length < 15000) {
+      forceConfig.gravity = 1000;
+      forceConfig.scalingRatio = 110;
+    } else if (g.nodes.length < 25000) {
+      forceConfig.gravity = 1000;
+      forceConfig.scalingRatio = 70;
+    } else {
+      forceConfig.gravity = 1000;
+      forceConfig.scalingRatio = 30;
+    }
+
   }
 
   var s = new sigma({
@@ -60,6 +80,7 @@ function createGraph(g, container) {
     container: container,
     settings: graphSettings
   })
+
   //Start Force Atlas algorithm
   s.startForceAtlas2(forceConfig);
   setTimeout(function() {
