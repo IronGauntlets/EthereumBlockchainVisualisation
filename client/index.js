@@ -13,7 +13,6 @@ app.use(function(req, res, next) {
 // Middleware for logging requests
 app.use(function(req, res, next){
   console.log(req.method + ' request recieved for URI: ' + req.url + ' at ' + new Date().toUTCString());
-  console.log();
   next();
 })
 
@@ -22,28 +21,12 @@ app.use("/block/utils", express.static(path.join(__dirname + '/utils')));
 app.use("/account/utils", express.static(path.join(__dirname + '/utils')));
 app.use("/live/utils", express.static(path.join(__dirname + '/utils')));
 
+app.use("/account", express.static(path.join(__dirname + '/visualisations/account_transactions')));
+
 // Send favicon
 app.get('/favicon.ico', function (req, res) {
   res.sendFile(path.join(__dirname+'/favicon.ico'));
 });
-
-// Resquest for 2 node multiple single block transactions using gas
-app.get('/block/two_node/:id/:count', function (req, res) {
-  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/two_node.html'));
-})
-
-app.get('/block/two_node/:id/:count/gdo', function (req, res) {
-  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/two_node_gdo.html'));
-})
-
-// Resquest for 2 node multiple single block transactions using ether
-app.get('/block/two_node/:id/:count/ether', function (req, res) {
-  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/two_node_ether.html'));
-})
-
-app.get('/block/two_node/:id/:count/ether/gdo', function (req, res) {
-  res.sendFile(path.join(__dirname+'/visualisations/block_transactions/two_node_ether_gdo.html'));
-})
 
 // Resquest for 3 node multiple single block transactions using gas
 app.get('/block/three_node/:id/:count', function (req, res) {

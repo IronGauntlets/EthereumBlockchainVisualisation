@@ -10,9 +10,9 @@ const etherDenomination = 'finney';
 const defaultSize = Math.log(1);
 const contractCreationEdgeColor = '#80b6ad';
 const transactionNodeColor = '#1b7a91';
-const accountEdgeColor = '#015430';
+const accountEdgeColor = '#016D3E';
 const contractEdgeColor = '#e3b93c';
-const transactionEdgeColor = '#104957';
+const transactionEdgeColor = '#13596B';
 
 // Subclass for transaction graph
 function ThreeNodeTransactionGraph() {

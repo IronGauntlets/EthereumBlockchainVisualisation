@@ -3,7 +3,7 @@ const Node = require('./node.js');
 const Block = require('../block.js');
 
 const defaultSize = Math.log(1);
-const contractNodeColor = '#e3b93c';
+const contractNodeColor = '#FFFF00';
 const accountNodeColor = '#04c975';
 
 // Base class for creating different graphs

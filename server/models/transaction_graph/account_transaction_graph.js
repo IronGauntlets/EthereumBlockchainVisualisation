@@ -9,13 +9,13 @@ const Block = require('../block.js');
 const etherDenomination = 'finney';
 
 const defaultSize = Math.log(1);
-const contractColour = '#e3b93c';
+const contractColour = '#FFFF00';
 const accountColour = '#04c975';
 const contractCreationColour = '#80b6ad';
 const transactionNodeColor = '#00FFFF';
-const blockColour = '#ff0000';
-const inputColour = '#104957';
-const outputColour = '#015430';
+const blockColour = '#DC3FBC';
+const inputColour = '#186D83';
+const outputColour = '#016D3E';
 
 function AccountTransactionGraph(account) {
   TransactionGraph.call(this);
