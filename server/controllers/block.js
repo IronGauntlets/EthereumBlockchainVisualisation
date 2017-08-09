@@ -3,7 +3,6 @@ const router = express.Router();
 const fs = require("fs");
 
 const ToGraphML = require('./graphml_creator.js');
-const TwoNodeTransactionGraph = require('../models/transaction_graph/two_node_transaction_graph.js');
 const ThreeNodeTransactionGraph = require('../models/transaction_graph/three_node_transaction_graph.js');
 
 //Return multiple block according to the count requested for three node using gas
