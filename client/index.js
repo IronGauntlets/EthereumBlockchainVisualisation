@@ -22,6 +22,7 @@ app.use("/account/utils", express.static(path.join(__dirname + '/utils')));
 app.use("/live/utils", express.static(path.join(__dirname + '/utils')));
 
 app.use("/account", express.static(path.join(__dirname + '/visualisations/account_transactions')));
+app.use("/block", express.static(path.join(__dirname + '/visualisations/block_transactions')));
 
 // Send favicon
 app.get('/favicon.ico', function (req, res) {
