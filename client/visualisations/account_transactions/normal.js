@@ -32,6 +32,11 @@ http.get(url, function(res, err) {
 })
 
 function createGraph(g, container) {
+  var r = {
+    container: 'container',
+    type: 'canvas'
+  }
+
   var graphSettings = {
     scalingMode: "inside",
     hideEdgesOnMove: true,
@@ -77,7 +82,7 @@ function createGraph(g, container) {
 
   var s = new sigma({
     graph: g,
-    container: container,
+    renderer: r,
     settings: graphSettings
   })
 
