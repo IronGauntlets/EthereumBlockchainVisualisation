@@ -11,11 +11,11 @@ for (var i = 0; i < paths.length; i++) {
   }
 }
 
-var blockUrl = "http://146.169.46.80:3000/api/account";
+var blockUrl = "http://146.169.46.80:3000/api/block";
 if (isEther) {
-  var url = blockUrl + '/' + account + '/' + blockNumberOrHash  + '/' + count + '/ether';
+  var url = blockUrl + '/three_node'+ '/' + blockNumberOrHash  + '/' + count + '/ether';
 } else {
-  var url = blockUrl + '/' + account + '/' + blockNumberOrHash  + '/' + count;
+  var url = blockUrl + '/three_node'+ '/' + blockNumberOrHash  + '/' + count;
 }
 
 var graph;
@@ -31,15 +31,13 @@ http.get(url, function(res, err) {
     createGraph(graph, 'container');
 
     document.getElementById('info1').innerHTML = 'Starting Block number or hash = ' + blockNumberOrHash;
-    document.getElementById('info2').innerHTML = 'Starting Block Mined @ ' + graph.minedAt;
+    document.getElementById('info2').innerHTML = 'Starting Block Mined @ ' + graph.minedAt;;
     document.getElementById('info3').innerHTML  ='Blocks = ' + count;
-    document.getElementById('info4').innerHTML  ='Active Blocks = ' + graph.activeBlocks;
-    document.getElementById('info5').innerHTML = 'Nodes = ' + graph.nodes.length;
-    document.getElementById('info6').innerHTML  ='Edges = ' + graph.edges.length;
+    document.getElementById('info4').innerHTML = 'Nodes = ' + graph.nodes.length;
+    document.getElementById('info5').innerHTML  ='Edges = ' + graph.edges.length;
 
-    document.getElementById('acc1').innerHTML  ='Account Address = \n' + graph.account;
-    document.getElementById('acc2').innerHTML = 'Externally Owned Accounts = ' + graph.eoas;
-    document.getElementById('acc3').innerHTML  ='Contract Account = ' + graph.contracts;
+    document.getElementById('acc1').innerHTML = 'Externally Owned Accounts = ' + graph.eoas;
+    document.getElementById('acc2').innerHTML  ='Contract Account = ' + graph.contracts;
 
     document.getElementById('gas1').innerHTML = 'Maximum = ' + graph.maxGas;
     document.getElementById('gas2').innerHTML  ='Minimum = ' + graph.minGas;
@@ -50,6 +48,7 @@ http.get(url, function(res, err) {
     document.getElementById('eth2').innerHTML  ='Minimum = ' + graph.minEther;
     document.getElementById('eth3').innerHTML = 'Average = ' + graph.averageEther;
     document.getElementById('eth4').innerHTML = 'Total = ' + graph.totalEther;
+
 
   } else {
     console.error('GET ERROR: ' + err);
@@ -72,16 +71,14 @@ function createGraph(g, container) {
 
   var forceConfig = {
     worker: true,
-    startingIterations: 200,
-    slowDown: 4
+    startingIterations: 150,
+    slowDown: 2
   }
 
   if (isEther) {
-    graphSettings.minNodeSize = 1;
-    graphSettings.maxNodeSize = 2;
+    graphSettings.maxNodeSize = 2.5;
   } else {
-    graphSettings.minNodeSize = 1;
-    graphSettings.maxNodeSize = 1.7;
+    graphSettings.maxNodeSize = 1.5;
   }
 
   if (g.nodes.length < 1000) {
@@ -91,16 +88,13 @@ function createGraph(g, container) {
 
     if (g.nodes.length < 5000) {
       forceConfig.gravity = 100;
-      forceConfig.scalingRatio = 7.25;
+      forceConfig.scalingRatio = 20;
     } else if (g.nodes.length < 15000) {
       forceConfig.gravity = 1000;
-      forceConfig.scalingRatio = 90;
-    } else if (g.nodes.length < 25000) {
-      forceConfig.gravity = 1000;
-      forceConfig.scalingRatio = 70;
+      forceConfig.scalingRatio = 400;
     } else {
       forceConfig.gravity = 1000;
-      forceConfig.scalingRatio = 30;
+      forceConfig.scalingRatio = 200;
     }
 
   }

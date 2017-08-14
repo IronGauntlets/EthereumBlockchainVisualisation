@@ -10,11 +10,11 @@ for (var i = 0; i < paths.length; i++) {
   }
 }
 
-var blockUrl = "http://146.169.46.80:3000/api/account";
+var blockUrl = "http://146.169.46.80:3000/api/block";
 if (isEther) {
-  var url = blockUrl + '/' + account + '/' + blockNumberOrHash  + '/' + count + '/ether';
+  var url = blockUrl + '/three_node'+ '/' + blockNumberOrHash  + '/' + count + '/ether';
 } else {
-  var url = blockUrl + '/' + account + '/' + blockNumberOrHash  + '/' + count;
+  var url = blockUrl + '/three_node'+ '/' + blockNumberOrHash  + '/' + count;
 }
 
 http.get(url, function(res, err) {
@@ -47,16 +47,14 @@ function createGraph(g, container) {
 
   var forceConfig = {
     worker: true,
-    startingIterations: 200,
-    slowDown: 4
+    startingIterations: 150,
+    slowDown: 2
   }
 
   if (isEther) {
-    graphSettings.minNodeSize = 1;
-    graphSettings.maxNodeSize = 2;
+    graphSettings.maxNodeSize = 2.5;
   } else {
-    graphSettings.minNodeSize = 1;
-    graphSettings.maxNodeSize = 1.7;
+    graphSettings.maxNodeSize = 1.5;
   }
 
   if (g.nodes.length < 1000) {
@@ -66,16 +64,13 @@ function createGraph(g, container) {
 
     if (g.nodes.length < 5000) {
       forceConfig.gravity = 100;
-      forceConfig.scalingRatio = 7.25;
+      forceConfig.scalingRatio = 20;
     } else if (g.nodes.length < 15000) {
       forceConfig.gravity = 1000;
-      forceConfig.scalingRatio = 110;
-    } else if (g.nodes.length < 25000) {
-      forceConfig.gravity = 1000;
-      forceConfig.scalingRatio = 70;
+      forceConfig.scalingRatio = 400;
     } else {
       forceConfig.gravity = 1000;
-      forceConfig.scalingRatio = 30;
+      forceConfig.scalingRatio = 200;
     }
 
   }

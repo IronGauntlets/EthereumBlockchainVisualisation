@@ -1,0 +1,49 @@
+body {
+  background-color: #000;
+}
+
+h6 {
+  margin: 2px;
+}
+
+th {
+  padding: 30px;
+}
+
+table {
+  float: left;
+}
+
+h1, h6, td, th {
+  color: #20b2aa;
+  font-family: arial, sans-serif;
+  font-size: 250%;
+}
+
+h1, h6 {
+  font-size: 450%;
+}
+
+h1 {
+  margin-bottom: 0px;
+}
+
+h1, #author {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+#container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin-left: 1000px;
+}
+
+#graph_container {
+  position: relative;
+  top: 20px;
+  height: 4100px;
+  width: 4100px;
+}

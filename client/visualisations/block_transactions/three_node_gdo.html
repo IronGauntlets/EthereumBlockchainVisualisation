@@ -4,54 +4,7 @@
 <head>
   <meta charset='utf-8'>
   <title>Three Node Block Transactions (Gas)</title>
-  <style type="text/css">
-  body {
-    background-color: #000;
-  }
-
-  h6 {
-    margin: 2px;
-  }
-
-  th {
-    padding: 30px;
-  }
-
-  table {
-    float: left;
-  }
-
-  h1, h6, td, th {
-    color: #20b2aa;
-    font-family: arial, sans-serif;
-    font-size: 450%;
-  }
-
-  h1 {
-    margin-bottom: 0px;
-  }
-
-  h1, #author {
-    display:flex;
-    justify-content:center;
-    align-items:center;
-  }
-
-  #container {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    margin-left: 1000px;
-  }
-
-  #graph_container {
-    position: relative;
-    top: 20px;
-    height: 4100px;
-    width: 4100px;
-  }
-
-  </style>
+  <link rel="stylesheet" type="text/css" href="../../../gdo.css">
 </head>
 
 <body>
@@ -133,88 +86,6 @@
   <script type="text/javascript" src='../../../utils/external_libs/sigmajs/plugins/sigma.parsers.json.min.js'></script>
   <script type="text/javascript" src='../../../utils/external_libs/sigmajs/plugins/sigma.layout.forceAtlas2.min.js'></script>
   <script type="text/javascript" src='../../../utils/http.js'></script>
-  <script type="text/javascript">
-  var paths = window.location.pathname.split('/');
-  var blockNumberOrHash = paths[3];
-  var count = paths[4];
-  console.log(paths);
-
-
-  // var blockUrl = "http://localhost:3000/api/block"; //when running locally
-  var blockUrl = "http://146.169.46.80:3000/api/block";
-  var url = blockUrl + '/three_node' + '/' + blockNumberOrHash  + '/' + count;
-  var graph;
-
-  http.get(url, function(res, err) {
-    if (res != null) {
-      graph = JSON.parse(res);
-      console.log(graph);
-      console.log("Nodes: " + graph.nodes.length);
-      console.log("Edges: " + graph.edges.length);
-      createGraph(graph, 'container');
-
-      document.getElementById('info1').innerHTML = 'Starting Block number or hash = ' + blockNumberOrHash;
-      document.getElementById('info2').innerHTML = 'Starting Block Mined @ ' + graph.minedAt;;
-      document.getElementById('info3').innerHTML  ='Blocks = ' + count;
-      document.getElementById('info4').innerHTML = 'Nodes = ' + graph.nodes.length;
-      document.getElementById('info5').innerHTML  ='Edges = ' + graph.edges.length;
-
-      document.getElementById('acc1').innerHTML = 'Externally Owned Accounts = ' + graph.eoas;
-      document.getElementById('acc2').innerHTML  ='Contract Account = ' + graph.contracts;
-
-      document.getElementById('gas1').innerHTML = 'Maximum = ' + graph.maxGas;
-      document.getElementById('gas2').innerHTML  ='Minimum = ' + graph.minGas;
-      document.getElementById('gas3').innerHTML = 'Average = ' + graph.averageGas;
-      document.getElementById('gas4').innerHTML = 'Total = ' + graph.totalGas;
-
-      document.getElementById('eth1').innerHTML = 'Maximum = ' + graph.maxEther;
-      document.getElementById('eth2').innerHTML  ='Minimum = ' + graph.minEther;
-      document.getElementById('eth3').innerHTML = 'Average = ' + graph.averageEther;
-      document.getElementById('eth4').innerHTML = 'Total = ' + graph.totalEther;
-
-
-    } else {
-      console.error('GET ERROR: ' + err);
-    }
-  })
-
-
-  function createGraph(g, container) {
-    var renderer = {
-      container: container,
-      type: 'canvas'
-    }
-
-
-    var graphSettings = {
-      maxNodeSize: 3.5,
-      scalingMode: "inside",
-      hideEdgesOnMove: true,
-      labelThreshold: 100000000,
-      singleHover: true,
-      sideMargin: 3
-    }
-
-    var forceConfig = {
-      worker: true,
-      barnesHutOptimize: true,
-      strongGravityMode:true,
-      startingIterations: 100,
-      slowDown: 2
-    }
-
-    var s = new sigma({
-      graph: g,
-      renderer: renderer,
-      settings: graphSettings
-    })
-    //Start Force Atlas algorithm
-    s.startForceAtlas2(forceConfig);
-    setTimeout(function() {
-      s.killForceAtlas2();
-    },600000);
-  }
-
-  </script>
+  <script type="text/javascript" src='../../../gdo.js'></script>
 </body>
 </html>
