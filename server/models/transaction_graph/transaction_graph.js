@@ -55,37 +55,37 @@ TransactionGraph.prototype.processBlocks = function(blockId, count, info, callba
 }
 
 // Methods to be overridden in subclasses
-TransactionGraph.prototype.processTransaction = function(sender, reciever) {
+TransactionGraph.prototype.processTransaction = function(sender, reciever, blockNumber) {
   // Determine whether the sender and reciever are already in nodes
   var senderInNodes = this.contains(sender.address);
   var recieverInNodes = this.contains(reciever.address);
   // When both the sender and reciever are same
   if (sender.address === reciever.address) {
-    if (!senderInNodes) this.nodes.push(this.createNode(sender));
+    if (!senderInNodes) this.nodes.push(this.createNode(sender, blockNumber));
   }  else {
     //When both sender and reciever are not in nodes
     if (!senderInNodes && !recieverInNodes) {
       //Add both sender and reciever to nodes
-      this.nodes.push(this.createNode(sender));
-      this.nodes.push(this.createNode(reciever));
+      this.nodes.push(this.createNode(sender, blockNumber));
+      this.nodes.push(this.createNode(reciever, blockNumber));
     }
     //Either sender or reciever is in nodes
     else {
       //If sender is not in nodes then add sender and vise versa
-      if (!senderInNodes && recieverInNodes) this.nodes.push(this.createNode(sender));
-      if (!recieverInNodes && senderInNodes) this.nodes.push(this.createNode(reciever));
+      if (!senderInNodes && recieverInNodes) this.nodes.push(this.createNode(sender, blockNumber));
+      if (!recieverInNodes && senderInNodes) this.nodes.push(this.createNode(reciever, blockNumber));
     }
   }
 }
 
 // Create relative nodes
-TransactionGraph.prototype.createNode = function(senderOrReciever) {
+TransactionGraph.prototype.createNode = function(senderOrReciever, blockNumber) {
   if (senderOrReciever.isContract) {
     this.contracts++;
-    return new Node(senderOrReciever.address, contractNodeColor, defaultSize);
+    return new Node(senderOrReciever.address, contractNodeColor, defaultSize, blockNumber);
   } else {
     this.eoas++;
-    return new Node(senderOrReciever.address, accountNodeColor, defaultSize);
+    return new Node(senderOrReciever.address, accountNodeColor, defaultSize, blockNumber);
   }
 }
 

@@ -6,14 +6,17 @@ var nodeR = 'nr';
 var nodeG = 'ng';
 var nodeB = 'nb';
 var nodeSize = 'size';
+var nodeGravityX = 'gravity_x';
+var nodePart = 'part';
 
 var edgeR = 'er';
 var edgeG = 'eg';
 var edgeB = 'eb';
 var edgeSize = 'weight';
 
-var sizeAndWeightType = 'double';
+var sizeWeightAndGravityType = 'double';
 var rgbType = 'int';
+var partType = 'int';
 
 function ToGraphML(jsonGraph, directed, blockId, count) {
   var blockId = blockId;
@@ -37,8 +40,10 @@ function ToGraphML(jsonGraph, directed, blockId, count) {
     {'@id': edgeR, '@for': 'edge', '@attr.name': 'r', '@attr.type': rgbType},
     {'@id': edgeG, '@for': 'edge', '@attr.name': 'g', '@attr.type': rgbType},
     {'@id': edgeB, '@for': 'edge', '@attr.name': 'b', '@attr.type': rgbType},
-    {'@id': nodeSize, '@for': 'node', '@attr.name': 'size', '@attr.type': sizeAndWeightType},
-    {'@id': edgeSize, '@for': 'edge', '@attr.name': 'weight', '@attr.type': sizeAndWeightType}
+    {'@id': nodePart, '@for': 'node', '@attr.name': 'part', '@attr.type': partType},
+    {'@id': nodeSize, '@for': 'node', '@attr.name': 'size', '@attr.type': sizeWeightAndGravityType},
+    {'@id': nodeGravityX, '@for': 'node', '@attr.name': 'gravity_x', '@attr.type': sizeWeightAndGravityType},
+    {'@id': edgeSize, '@for': 'edge', '@attr.name': 'weight', '@attr.type': sizeWeightAndGravityType}
   ]
   if (this.directed) {
     this.graphMLObj.graphml['graph'] = {
@@ -55,13 +60,21 @@ function ToGraphML(jsonGraph, directed, blockId, count) {
     var g = hexToG(node.color);
     var b = hexToB(node.color);
 
+    node.blockNumber = node.blockNumber % count;
+
+    if (node.size <= 0) {
+      node.size = 1.0;
+    }
+
     return {
       '@id': node.id,
       'data': [
         {'@key': nodeR, '#text': r},
         {'@key': nodeG, '#text': g},
         {'@key': nodeB, '#text': b},
-        {'@key': nodeSize, '#text': node.size}
+        {'@key': nodeSize, '#text': node.size},
+        {'@key': nodeGravityX, '#text': node.blockNumber},
+        {'@key': nodePart, '#text': node.blockNumber}
       ]
     };
   }
@@ -70,6 +83,10 @@ function ToGraphML(jsonGraph, directed, blockId, count) {
     var r = hexToR(edge.color);
     var g = hexToG(edge.color);
     var b = hexToB(edge.color);
+
+    if (edge.size <= 0) {
+      edge.size = 5.0;
+    }
 
     return {
       '@id': edge.id,
