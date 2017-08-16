@@ -50,17 +50,17 @@ ThreeNodeTransactionGraph.prototype.processTransactionsToGraph = function(transa
       } else {
         transactions[i].value = Math.log(parseFloat(web3.fromWei(transactions[i].value, etherDenomination)/75));
       }
-      this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].isNew, transactions[i].value);
+      this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].isNew, transactions[i].value, transactions[i].blockNumber);
     }
     else  {
-      this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].isNew, Math.log(transactions[i].gasUsed/10000));
+      this.processTransaction(transactions[i].from, transactions[i].to, transactions[i].hash, transactions[i].isNew, Math.log(transactions[i].gasUsed/10000), transactions[i].blockNumber);
     }
   }
 }
 
-ThreeNodeTransactionGraph.prototype.processTransaction = function(sender, reciever, transactionHash, isNew, value) {
-  TransactionGraph.prototype.processTransaction.call(this, sender, reciever);
-  this.nodes.push(new Node(transactionHash, transactionNodeColor, value));
+ThreeNodeTransactionGraph.prototype.processTransaction = function(sender, reciever, transactionHash, isNew, value, blockNumber) {
+  TransactionGraph.prototype.processTransaction.call(this, sender, reciever, blockNumber);
+  this.nodes.push(new Node(transactionHash, transactionNodeColor, value, blockNumber));
   this.createEdges(transactionHash, sender, reciever, isNew);
 }
 
