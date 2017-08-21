@@ -21,6 +21,7 @@ var partType = 'int';
 function ToGraphML(jsonGraph, directed, blockId, count) {
   var blockId = blockId;
   var count = count;
+  var lowerBound = blockId - count;
 
   this.filePath = path.join(__dirname + '/' + blockId + '_' + count + '.graphml');
   this.directed = directed;
@@ -37,9 +38,9 @@ function ToGraphML(jsonGraph, directed, blockId, count) {
     {'@id': nodeR, '@for': 'node', '@attr.name': 'r', '@attr.type': rgbType},
     {'@id': nodeG, '@for': 'node', '@attr.name': 'g', '@attr.type': rgbType},
     {'@id': nodeB, '@for': 'node', '@attr.name': 'b', '@attr.type': rgbType},
-    {'@id': edgeR, '@for': 'edge', '@attr.name': 'r', '@attr.type': rgbType},
-    {'@id': edgeG, '@for': 'edge', '@attr.name': 'g', '@attr.type': rgbType},
-    {'@id': edgeB, '@for': 'edge', '@attr.name': 'b', '@attr.type': rgbType},
+    {'@id': edgeR, '@for': 'edge', '@attr.name': 'r1', '@attr.type': rgbType},
+    {'@id': edgeG, '@for': 'edge', '@attr.name': 'g1', '@attr.type': rgbType},
+    {'@id': edgeB, '@for': 'edge', '@attr.name': 'b1', '@attr.type': rgbType},
     {'@id': nodePart, '@for': 'node', '@attr.name': 'part', '@attr.type': partType},
     {'@id': nodeSize, '@for': 'node', '@attr.name': 'size', '@attr.type': sizeWeightAndGravityType},
     {'@id': nodeGravityX, '@for': 'node', '@attr.name': 'gravity_x', '@attr.type': sizeWeightAndGravityType},
@@ -60,8 +61,6 @@ function ToGraphML(jsonGraph, directed, blockId, count) {
     var g = hexToG(node.color);
     var b = hexToB(node.color);
 
-    node.blockNumber = node.blockNumber % count;
-
     if (node.size <= 0) {
       node.size = 1.0;
     }
@@ -73,8 +72,8 @@ function ToGraphML(jsonGraph, directed, blockId, count) {
         {'@key': nodeG, '#text': g},
         {'@key': nodeB, '#text': b},
         {'@key': nodeSize, '#text': node.size},
-        {'@key': nodeGravityX, '#text': node.blockNumber},
-        {'@key': nodePart, '#text': node.blockNumber}
+        {'@key': nodeGravityX, '#text': node.blockNumber - lowerBound},
+        {'@key': nodePart, '#text': node.blockNumber - lowerBound}
       ]
     };
   }
