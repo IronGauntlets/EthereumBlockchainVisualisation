@@ -16,7 +16,7 @@ const contractEdgeColor = '#e3b93c';
 const transactionEdgeColor = '#104957';
 const contractNodeColor = '#FFFF00';
 const accountNodeColor = '#04c975';
-const blockEdgeColor = '#FF6E4E';
+const blockEdgeColor = '#A93F7F';
 
 // Subclass for transaction graph
 function TimeThreeNodeTransactionGraph() {
@@ -51,7 +51,6 @@ TimeThreeNodeTransactionGraph.prototype.processBlocks = function(blockId, count,
       if (this.accountsHashMap.hasOwnProperty(b)) {
         var bList = Object.keys(this.accountsHashMap[b]).sort();
         if (bList.length > 1) {
-          console.log(bList);
           for (var i = 0; i < bList.length - 1; i++) {
             this.edges.push(new Edge(this.edgeCount++, b + '(' + bList[i] + ')', b + '(' + bList[i+1] + ')', blockEdgeColor, defaultSize, null));
           }
