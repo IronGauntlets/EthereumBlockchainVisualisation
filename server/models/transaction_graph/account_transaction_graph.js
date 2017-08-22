@@ -22,23 +22,6 @@ function AccountTransactionGraph(account) {
   this.edgeCount = 0;
   this.account = account.toLowerCase();
   this.activeBlocksHashMap = {};
-
-  this.numberOfTransactions = 0;
-
-  this.eoas = 0;
-  this.contracts = 0;
-
-  this.minGas = 0;
-  this.maxGas = 0;
-  this.totalGas = 0;
-  this.averageGas = 0;
-
-  this.minEther = 0;
-  this.maxEther = 0;
-  this.totalEther = 0;
-  this.averageEther = 0;
-
-  this.minedAt;
   this.activeBlocks = 0;
 }
 

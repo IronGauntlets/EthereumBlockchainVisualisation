@@ -4,29 +4,46 @@ const fs = require("fs");
 
 const ToGraphML = require('./graphml_creator.js');
 const ThreeNodeTransactionGraph = require('../models/transaction_graph/three_node_transaction_graph.js');
+const TimeThreeNodeTransactionGraph = require('../models/transaction_graph/time_three_node_transaction_graph.js');
 
-//Return multiple block according to the count requested for three node using gas
 router.get('/three_node/:id/:count', function(req, res) {
   var threeNodeGraph = new ThreeNodeTransactionGraph();
   threeNodeGraph.processBlocks(req.params.id, req.params.count, null, jsonCallback, res, req);
 })
 
-//Return multiple block according to the count requested for three node using gas in graphml
 router.get('/three_node/:id/:count/graphml', function(req, res) {
   var threeNodeGraph = new ThreeNodeTransactionGraph();
   threeNodeGraph.processBlocks(req.params.id, req.params.count, null, graphMLCallback, res, req, false);
 })
 
-//Return multiple block according to the count requested for three node using ether
 router.get('/three_node/:id/:count/ether', function(req, res) {
   var threeNodeGraph = new ThreeNodeTransactionGraph();
   threeNodeGraph.processBlocks(req.params.id, req.params.count, 'value', jsonCallback, res, req);
 })
 
-//Return multiple block according to the count requested for three node using ether in graphml
 router.get('/three_node/:id/:count/ether/graphml', function(req, res) {
   var threeNodeGraph = new ThreeNodeTransactionGraph();
   threeNodeGraph.processBlocks(req.params.id, req.params.count, 'value', graphMLCallback, res, req, false);
+})
+
+router.get('/time_three_node/:id/:count', function(req, res) {
+  var timeThreeNodeGraph = new TimeThreeNodeTransactionGraph();
+  timeThreeNodeGraph.processBlocks(req.params.id, req.params.count, null, jsonCallback, res, req);
+})
+
+router.get('/time_three_node/:id/:count/graphml', function(req, res) {
+  var timeThreeNodeGraph = new TimeThreeNodeTransactionGraph();
+  timeThreeNodeGraph.processBlocks(req.params.id, req.params.count, null, graphMLCallback, res, req, false);
+})
+
+router.get('/time_three_node/:id/:count/ether', function(req, res) {
+  var timeThreeNodeGraph = new TimeThreeNodeTransactionGraph();
+  timeThreeNodeGraph.processBlocks(req.params.id, req.params.count, 'value', jsonCallback, res, req);
+})
+
+router.get('/time_three_node/:id/:count/ether/graphml', function(req, res) {
+  var timeThreeNodeGraph = new TimeThreeNodeTransactionGraph();
+  timeThreeNodeGraph.processBlocks(req.params.id, req.params.count, 'value', graphMLCallback, res, req, false);
 })
 
 function jsonCallback(graph, response, request) {

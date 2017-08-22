@@ -4,6 +4,7 @@ const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.44.234:854
 const TransactionGraph = require('./transaction_graph.js');
 const Edge = require('./edge.js');
 const Node = require('./node.js');
+const Block = require('../block.js');
 
 const etherDenomination = 'finney';
 
@@ -15,6 +16,7 @@ const contractEdgeColor = '#e3b93c';
 const transactionEdgeColor = '#104957';
 const contractNodeColor = '#FFFF00';
 const accountNodeColor = '#04c975';
+const blockEdgeColor = '#FF6E4E';
 
 // Subclass for transaction graph
 function TimeThreeNodeTransactionGraph() {
@@ -25,6 +27,40 @@ function TimeThreeNodeTransactionGraph() {
 
 TimeThreeNodeTransactionGraph.prototype = Object.create(TransactionGraph.prototype);
 TimeThreeNodeTransactionGraph.prototype.constructor = TimeThreeNodeTransactionGraph;
+
+TimeThreeNodeTransactionGraph.prototype.processBlocks = function(blockId, count, info, callback, request, response, directed) {
+  Block.getBlocks(blockId, count, (blocks) => {
+    for (var i = 0; i < blocks.length; i++) {
+      if( (i+1) % 100 == 0) {console.log('i: ' + (i+1))};
+      this.numberOfTransactions = this.numberOfTransactions + blocks[i].transactions.length;
+      if (blocks[i].number == blockId) {
+        var date = new Date(blocks[i].timestamp*1000);
+        this.minedAt = date.toLocaleString();
+      }
+      this.processTransactionsToGraph(blocks[i].transactions, info);
+    }
+    if (this.numberOfTransactions == 0){
+      this.averageGas = 0;
+      this.averageEther = 0;
+    } else {
+      this.averageGas = this.totalGas/this.numberOfTransactions;
+      this.averageEther = this.totalEther/this.numberOfTransactions;
+    }
+
+    for (var b in this.accountsHashMap) {
+      if (this.accountsHashMap.hasOwnProperty(b)) {
+        var bList = Object.keys(this.accountsHashMap[b]).sort();
+        if (bList.length > 1) {
+          console.log(bList);
+          for (var i = 0; i < bList.length - 1; i++) {
+            this.edges.push(new Edge(this.edgeCount++, b + '(' + bList[i] + ')', b + '(' + bList[i+1] + ')', blockEdgeColor, defaultSize, null));
+          }
+        }
+      }
+    }
+    callback(this, request, response, directed);
+  })
+}
 
 TimeThreeNodeTransactionGraph.prototype.processTransactionsToGraph = function(transactions, info) {
   for (var i = 0; i < transactions.length; i++) {
@@ -86,7 +122,7 @@ TimeThreeNodeTransactionGraph.prototype.processTransaction = function(sender, re
         this.nodes.push(new Node(sender.address, accountNodeColor, defaultSize, blockNumber));
       }
     } else {
-      this.accountsHashMap[senderAddr][blockNumber] = this.accountsHashMap[senderAddr][blockNumber]++;
+      this.accountsHashMap[senderAddr][blockNumber]++;
     }
   }
 
@@ -108,7 +144,7 @@ TimeThreeNodeTransactionGraph.prototype.processTransaction = function(sender, re
         this.nodes.push(new Node(reciever.address, accountNodeColor, defaultSize, blockNumber));
       }
     } else {
-      this.accountsHashMap[recieverAddr][blockNumber] = this.accountsHashMap[recieverAddr][blockNumber]++;
+      this.accountsHashMap[recieverAddr][blockNumber]++;
     }
   }
 
