@@ -7,6 +7,7 @@ var nodeG = 'ng';
 var nodeB = 'nb';
 var nodeSize = 'size';
 var nodeGravityX = 'gravity_x';
+var nodeGravityY = 'gravity_y';
 var nodePart = 'part';
 
 var edgeR = 'er';
@@ -42,8 +43,9 @@ function ToGraphML(jsonGraph, directed, blockId, count) {
     {'@id': edgeG, '@for': 'edge', '@attr.name': 'g1', '@attr.type': rgbType},
     {'@id': edgeB, '@for': 'edge', '@attr.name': 'b1', '@attr.type': rgbType},
     {'@id': nodePart, '@for': 'node', '@attr.name': 'part', '@attr.type': partType},
-    {'@id': nodeSize, '@for': 'node', '@attr.name': 'size', '@attr.type': sizeWeightAndGravityType},
     {'@id': nodeGravityX, '@for': 'node', '@attr.name': 'gravity_x', '@attr.type': sizeWeightAndGravityType},
+    {'@id': nodeGravityY, '@for': 'node', '@attr.name': 'gravity_y', '@attr.type': sizeWeightAndGravityType},
+    {'@id': nodeSize, '@for': 'node', '@attr.name': 'size', '@attr.type': sizeWeightAndGravityType},
     {'@id': edgeSize, '@for': 'edge', '@attr.name': 'weight', '@attr.type': sizeWeightAndGravityType}
   ]
   if (this.directed) {
@@ -60,9 +62,10 @@ function ToGraphML(jsonGraph, directed, blockId, count) {
     var r = hexToR(node.color);
     var g = hexToG(node.color);
     var b = hexToB(node.color);
+    var size = node.size;
 
-    if (node.size <= 0) {
-      node.size = 1.0;
+    if (node.size == 0) {
+      size = 1.0;
     }
 
     return {
@@ -71,8 +74,9 @@ function ToGraphML(jsonGraph, directed, blockId, count) {
         {'@key': nodeR, '#text': r},
         {'@key': nodeG, '#text': g},
         {'@key': nodeB, '#text': b},
-        {'@key': nodeSize, '#text': node.size},
+        {'@key': nodeSize, '#text': size},
         {'@key': nodeGravityX, '#text': node.blockNumber - lowerBound},
+        {'@key': nodeGravityY, '#text': node.size},
         {'@key': nodePart, '#text': node.blockNumber - lowerBound}
       ]
     };
