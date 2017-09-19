@@ -8,6 +8,7 @@ const Node = require('./node.js');
 const etherDenomination = 'finney';
 
 const defaultSize = Math.log(1);
+const defaultGravityY = 0;
 const contractCreationEdgeColor = '#80b6ad';
 const transactionNodeColor = '#1b7a91';
 const accountEdgeColor = '#015430';
@@ -60,7 +61,7 @@ ThreeNodeTransactionGraph.prototype.processTransactionsToGraph = function(transa
 
 ThreeNodeTransactionGraph.prototype.processTransaction = function(sender, reciever, transactionHash, isNew, value, blockNumber) {
   TransactionGraph.prototype.processTransaction.call(this, sender, reciever, blockNumber);
-  this.nodes.push(new Node(transactionHash, transactionNodeColor, value, blockNumber));
+  this.nodes.push(new Node(transactionHash, transactionNodeColor, value, defaultGravityY, blockNumber));
   this.createEdges(transactionHash, sender, reciever, isNew);
 }
 

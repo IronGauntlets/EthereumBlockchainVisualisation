@@ -9,6 +9,7 @@ const Block = require('../block.js');
 const etherDenomination = 'finney';
 
 const defaultSize = Math.log(1);
+const defaultGravityY = 0;
 const contractCreationEdgeColor = '#80b6ad';
 const transactionNodeColor = '#1b7a91';
 const accountEdgeColor = '#015430';
@@ -47,12 +48,19 @@ TimeThreeNodeTransactionGraph.prototype.processBlocks = function(blockId, count,
       this.averageEther = this.totalEther/this.numberOfTransactions;
     }
 
-    for (var b in this.accountsHashMap) {
-      if (this.accountsHashMap.hasOwnProperty(b)) {
-        var bList = Object.keys(this.accountsHashMap[b]).sort();
-        if (bList.length > 1) {
-          for (var i = 0; i < bList.length - 1; i++) {
-            this.edges.push(new Edge(this.edgeCount++, b + '(' + bList[i] + ')', b + '(' + bList[i+1] + ')', blockEdgeColor, defaultSize, null));
+    for (var acc in this.accountsHashMap) {
+      if (this.accountsHashMap.hasOwnProperty(acc)) {
+        var blockNumbers = Object.keys(this.accountsHashMap[acc]).sort();
+        for (var i = 0; i < blockNumbers.length; i++) {
+          if (this.accountsHashMap[acc][blockNumbers[i]].isContract){
+            this.nodes.push(new Node(acc + '('+ blockNumbers[i] +')', contractNodeColor, defaultSize, this.accountsHashMap[acc][blockNumbers[i]].curAvg, blockNumbers[i]))
+          } else {
+            this.nodes.push(new Node(acc + '('+ blockNumbers[i] +')', accountNodeColor, defaultSize, this.accountsHashMap[acc][blockNumbers[i]].curAvg, blockNumbers[i]))
+          }
+        }
+        if (blockNumbers.length > 1) {
+          for (var i = 0; i < blockNumbers.length - 1; i++) {
+            this.edges.push(new Edge(this.edgeCount++, acc + '(' + blockNumbers[i] + ')', acc + '(' + blockNumbers[i+1] + ')', blockEdgeColor, defaultSize, null));
           }
         }
       }
@@ -105,49 +113,49 @@ TimeThreeNodeTransactionGraph.prototype.processTransaction = function(sender, re
 
   if (!this.accountsHashMap.hasOwnProperty(senderAddr)) {
     this.accountsHashMap[senderAddr] = {};
-    this.accountsHashMap[senderAddr][blockNumber] = 1;
-
-    if (sender.isContract) {
-      this.nodes.push(new Node(sender.address, contractNodeColor, defaultSize, blockNumber))
-    } else {
-      this.nodes.push(new Node(sender.address, accountNodeColor, defaultSize, blockNumber));
-    }
+    this.accountsHashMap[senderAddr][blockNumber] = {
+      count: 1,
+      curAvg: value,
+      isContract: sender.isContract
+    };
   } else {
     if (!this.accountsHashMap[senderAddr].hasOwnProperty(blockNumber)) {
-      this.accountsHashMap[senderAddr][blockNumber] = 1;
-      if (sender.isContract) {
-        this.nodes.push(new Node(sender.address, contractNodeColor, defaultSize, blockNumber))
-      } else {
-        this.nodes.push(new Node(sender.address, accountNodeColor, defaultSize, blockNumber));
-      }
+      this.accountsHashMap[senderAddr][blockNumber] = {
+        count: 1,
+        curAvg: value,
+        isContract: sender.isContract
+      };
     } else {
-      this.accountsHashMap[senderAddr][blockNumber]++;
+      this.accountsHashMap[senderAddr][blockNumber]['count']++;
+      var avg = this.accountsHashMap[senderAddr][blockNumber]['curAvg'];
+      var n = this.accountsHashMap[senderAddr][blockNumber]['count'];
+      this.accountsHashMap[senderAddr][blockNumber]['curAvg'] = avg + (value - avg) / n;
     }
   }
 
   if (!this.accountsHashMap.hasOwnProperty(recieverAddr)) {
     this.accountsHashMap[recieverAddr] = {};
-    this.accountsHashMap[recieverAddr][blockNumber] = 1;
-
-    if (reciever.isContract) {
-      this.nodes.push(new Node(reciever.address, contractNodeColor, defaultSize, blockNumber))
-    } else {
-      this.nodes.push(new Node(reciever.address, accountNodeColor, defaultSize, blockNumber));
-    }
+    this.accountsHashMap[recieverAddr][blockNumber] = {
+      count: 1,
+      curAvg: value,
+      isContract: reciever.isContract
+    };
   } else {
     if (!this.accountsHashMap[recieverAddr].hasOwnProperty(blockNumber)) {
-      this.accountsHashMap[recieverAddr][blockNumber] = 1;
-      if (reciever.isContract) {
-        this.nodes.push(new Node(reciever.address, contractNodeColor, defaultSize, blockNumber))
-      } else {
-        this.nodes.push(new Node(reciever.address, accountNodeColor, defaultSize, blockNumber));
-      }
+      this.accountsHashMap[recieverAddr][blockNumber] = {
+        count: 1,
+        curAvg: value,
+        isContract: reciever.isContract
+      };
     } else {
-      this.accountsHashMap[recieverAddr][blockNumber]++;
+      this.accountsHashMap[recieverAddr][blockNumber]['count']++;
+      var avg = this.accountsHashMap[recieverAddr][blockNumber]['curAvg'];
+      var n = this.accountsHashMap[recieverAddr][blockNumber]['count'];
+      this.accountsHashMap[recieverAddr][blockNumber]['curAvg'] = avg + (value - avg) / n;
     }
   }
 
-  this.nodes.push(new Node(transactionHash, transactionNodeColor, value, blockNumber));
+  this.nodes.push(new Node(transactionHash, transactionNodeColor, value, value, blockNumber));
   this.createEdges(transactionHash, sender, reciever, isNew);
 }
 
