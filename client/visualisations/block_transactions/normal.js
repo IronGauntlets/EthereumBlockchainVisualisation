@@ -15,7 +15,8 @@ for (var i = 0; i < paths.length; i++) {
 }
 
 // var url = "http://localhost:3000/api/block"; //when running locally
-var url = "http://146.169.46.80:3000/api/block";
+// var url = "http://146.169.46.80:3000/api/block";
+var url = "http://146.169.32.151:3000/api/block";
 
 if (isTime) {
   url = url + '/time_three_node'+ '/' + blockNumberOrHash  + '/' + count;
@@ -57,7 +58,7 @@ function createGraph(g, container) {
 
   var forceConfig = {
     worker: true,
-    startingIterations: 150,
+    startingIterations: 75,
     slowDown: 2
   }
 
@@ -95,5 +96,5 @@ function createGraph(g, container) {
   s.startForceAtlas2(forceConfig);
   setTimeout(function() {
     s.killForceAtlas2();
-  }, 360000);
+  }, 300000);
 }

@@ -31,7 +31,7 @@
     web3 = new Web3(web3.currentProvider);
   } else {
     // set the provider you want from Web3.providers
-    web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.46.124:8545"));
+    web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.32.151:8545"));
   }
 
   // setTimeout(function(){
@@ -65,8 +65,10 @@
   var forceConfig = {
     worker: true,
     barnesHutOptimize: true,
-    strongGravityMode:true,
-    slowDown: 10
+    strongGravityMode: true,
+    gravity: 1,
+    scalingRatio: 1,
+    slowDown: 5
   }
 
   var graphSettings = {
