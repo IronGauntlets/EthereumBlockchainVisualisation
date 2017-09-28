@@ -6,8 +6,8 @@ const mongoClient = require('mongodb').MongoClient;
 const mongoURL = 'mongodb://146.169.46.80:27017/ethereum_blockchain';
 const mongodbCollection = 'blocks2';
 
-var blcNum = 2000000;
-var count  = 1000000;
+var blcNum = 4000000;
+var count  = 4000000;
 
 getBlocksRecursively(blcNum, count, ()=> {
   console.log('done');
