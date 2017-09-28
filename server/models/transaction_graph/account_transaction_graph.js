@@ -9,6 +9,7 @@ const Block = require('../block.js');
 const etherDenomination = 'finney';
 
 const defaultSize = Math.log(1);
+const defaultGravityY = 0;
 const contractColour = '#FFFF00';
 const accountColour = '#04c975';
 const contractCreationColour = '#80b6ad';
@@ -22,23 +23,6 @@ function AccountTransactionGraph(account) {
   this.edgeCount = 0;
   this.account = account.toLowerCase();
   this.activeBlocksHashMap = {};
-
-  this.numberOfTransactions = 0;
-
-  this.eoas = 0;
-  this.contracts = 0;
-
-  this.minGas = 0;
-  this.maxGas = 0;
-  this.totalGas = 0;
-  this.averageGas = 0;
-
-  this.minEther = 0;
-  this.maxEther = 0;
-  this.totalEther = 0;
-  this.averageEther = 0;
-
-  this.minedAt;
   this.activeBlocks = 0;
 }
 
@@ -53,7 +37,7 @@ AccountTransactionGraph.prototype.processBlocks = function(blockId, count, info,
         var date = new Date(blocks[i].timestamp*1000);
         this.minedAt = date.toLocaleString();
       }
-      this.nodes.push(new Node(blocks[i].hash, blockColour, defaultSize));
+      this.nodes.push(new Node(blocks[i].hash, blockColour, defaultSize, defaultGravityY, null));
       this.processTransactionsToGraph(blocks[i].transactions, info);
     }
     if (this.numberOfTransactions == 0){
@@ -113,18 +97,18 @@ AccountTransactionGraph.prototype.processTransaction = function(sender, reciever
   var senderInNodes = this.contains(sender.address);
   var recieverInNodes = this.contains(reciever.address);
 
-  this.nodes.push(new Node(transactionHash, transactionNodeColor, value));
+  this.nodes.push(new Node(transactionHash, transactionNodeColor, value, defaultGravityY, null));
   //this.account == sender
   if (this.account == sender.address) {
     if (!recieverInNodes){reciever.isContract ? this.contracts++ : this.eoas++;}
     if (reciever.isContract && isNew) {
-      if (!recieverInNodes) {this.nodes.push(new Node(reciever.address, contractColour, defaultSize));}
+      if (!recieverInNodes) {this.nodes.push(new Node(reciever.address, contractColour, defaultSize, defaultGravityY, null));}
       this.edges.push(new Edge(this.edgeCount++, blockHash, transactionHash, contractCreationColour, defaultSize, null));
     } else {
       if (reciever.isContract) {
-        if (!recieverInNodes) {this.nodes.push(new Node(reciever.address, contractColour, defaultSize));}
+        if (!recieverInNodes) {this.nodes.push(new Node(reciever.address, contractColour, defaultSize, defaultGravityY, null));}
       } else {
-        if (!recieverInNodes) {this.nodes.push(new Node(reciever.address, accountColour, defaultSize));}
+        if (!recieverInNodes) {this.nodes.push(new Node(reciever.address, accountColour, defaultSize, defaultGravityY, null));}
       }
       this.edges.push(new Edge(this.edgeCount++, blockHash, transactionHash, outputColour, defaultSize, null));
     }
@@ -134,13 +118,13 @@ AccountTransactionGraph.prototype.processTransaction = function(sender, reciever
   else if (this.account == reciever.address) {
     if (!senderInNodes) {sender.isContract ? this.contracts++ : this.eoas++;}
     if (reciever.isContract && isNew) {
-      if (!senderInNodes) {this.nodes.push(new Node(sender.address, accountColour, defaultSize));}
+      if (!senderInNodes) {this.nodes.push(new Node(sender.address, accountColour, defaultSize, defaultGravityY, null));}
       this.edges.push(new Edge(this.edgeCount++, blockHash, transactionHash, contractCreationColour, defaultSize, null));
     } else {
       if (sender.isContract) {
-        if(!senderInNodes) {this.nodes.push(new Node(sender.address, contractColour, defaultSize));}
+        if(!senderInNodes) {this.nodes.push(new Node(sender.address, contractColour, defaultSize, defaultGravityY, null));}
       } else {
-        if(!senderInNodes) {this.nodes.push(new Node(sender.address, accountColour, defaultSize));}
+        if(!senderInNodes) {this.nodes.push(new Node(sender.address, accountColour, defaultSize, defaultGravityY, null));}
       }
       this.edges.push(new Edge(this.edgeCount++, blockHash, transactionHash, inputColour, defaultSize, null));
     }

@@ -3,6 +3,7 @@ const Node = require('./node.js');
 const Block = require('../block.js');
 
 const defaultSize = Math.log(1);
+const defaultGravityY = 0;
 const contractNodeColor = '#FFFF00';
 const accountNodeColor = '#04c975';
 
@@ -82,10 +83,10 @@ TransactionGraph.prototype.processTransaction = function(sender, reciever, block
 TransactionGraph.prototype.createNode = function(senderOrReciever, blockNumber) {
   if (senderOrReciever.isContract) {
     this.contracts++;
-    return new Node(senderOrReciever.address, contractNodeColor, defaultSize, blockNumber);
+    return new Node(senderOrReciever.address, contractNodeColor, defaultSize, defaultGravityY, blockNumber);
   } else {
     this.eoas++;
-    return new Node(senderOrReciever.address, accountNodeColor, defaultSize, blockNumber);
+    return new Node(senderOrReciever.address, accountNodeColor, defaultSize, defaultGravityY, blockNumber);
   }
 }
 

@@ -4,18 +4,30 @@ var blockNumberOrHash = paths[3];
 var count = paths[4];
 var isEther = false;
 var nodeSizeThreshold = 20000;
+var isTime = false;
 
 for (var i = 0; i < paths.length; i++) {
   if (paths[i] === 'ether') {
     isEther = true;
   }
+  if (paths[i] === 'time_three_node') {
+    isTime = true;
+  }
 }
 
-var blockUrl = "http://146.169.46.80:3000/api/block";
-if (isEther) {
-  var url = blockUrl + '/three_node'+ '/' + blockNumberOrHash  + '/' + count + '/ether';
+// var url = "http://localhost:3000/api/block"; //when running locally
+// var url = "http://146.169.46.80:3000/api/block";
+var url = "http://146.169.32.151:3000/api/block";
+
+
+if (isTime) {
+  url = url + '/time_three_node'+ '/' + blockNumberOrHash  + '/' + count;
 } else {
-  var url = blockUrl + '/three_node'+ '/' + blockNumberOrHash  + '/' + count;
+  url = url + '/three_node'+ '/' + blockNumberOrHash  + '/' + count;
+}
+
+if (isEther) {
+  url = url + '/ether';
 }
 
 var graph;
@@ -71,7 +83,7 @@ function createGraph(g, container) {
 
   var forceConfig = {
     worker: true,
-    startingIterations: 150,
+    startingIterations: 75,
     slowDown: 2
   }
 
@@ -109,5 +121,5 @@ function createGraph(g, container) {
   s.startForceAtlas2(forceConfig);
   setTimeout(function() {
     s.killForceAtlas2();
-  }, 360000);
+  }, 300000);
 }

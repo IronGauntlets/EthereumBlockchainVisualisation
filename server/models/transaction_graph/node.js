@@ -1,10 +1,11 @@
 // Base class for Nodes
-function Node(id, color, size, blockNumber) {
+function Node(id, color, size, gravity_y, blockNumber) {
   this.id = id;
   this.color = color;
   this.x = -0.5 + Math.random();
   this.y = -0.5 + Math.random();
   this.size = size;
+  this.gravity_y = gravity_y;
   this.label = id;
   this.blockNumber = blockNumber;
 }

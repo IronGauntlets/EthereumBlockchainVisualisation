@@ -10,7 +10,9 @@ for (var i = 0; i < paths.length; i++) {
   }
 }
 
-var blockUrl = "http://146.169.46.80:3000/api/account";
+// var blockUrl = "http://146.169.46.80:3000/api/account";
+var blockUrl = "http://146.169.32.151:3000/api/account";
+
 if (isEther) {
   var url = blockUrl + '/' + account + '/' + blockNumberOrHash  + '/' + count + '/ether';
 } else {
@@ -47,8 +49,8 @@ function createGraph(g, container) {
 
   var forceConfig = {
     worker: true,
-    startingIterations: 200,
-    slowDown: 4
+    startingIterations: 75,
+    slowDown: 2
   }
 
   if (isEther) {
@@ -90,5 +92,5 @@ function createGraph(g, container) {
   s.startForceAtlas2(forceConfig);
   setTimeout(function() {
     s.killForceAtlas2();
-  }, 360000);
+  }, 300000);
 }
