@@ -1,10 +1,13 @@
 const Web3 = require('web3');
-const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.44.234:8545"));
+const fs = require("fs");
+
+const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.32.151:8545"));
+const mongoDetails = JSON.parse(fs.readFileSync("mongoconfig.json"));
 
 const Account = require('./account.js');
 const mongoClient = require('mongodb').MongoClient;
-const mongoURL = 'mongodb://146.169.46.80:27017/ethereum_blockchain';
-const mongodbCollection = 'blocks2';
+const mongoURL = 'mongodb://' + mongoDetails.username + ':' + mongoDetails.password + '@146.169.33.32:27020/Ethereum';
+const mongodbCollection = 'blocks';
 
 function getBlocks(id, count, callback) {
   var newId = parseInt(id);
@@ -29,7 +32,7 @@ function getBlocks(id, count, callback) {
               console.log('getBlocks: Closed MongoDB connection');
               callback(docs);
             });
-          }          
+          }
         }
       });
     }
