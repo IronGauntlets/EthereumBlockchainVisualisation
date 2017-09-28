@@ -1,8 +1,9 @@
 const Web3 = require('web3');
 const fs = require("fs");
+const path = require('path');
 
 const web3 = new Web3(new Web3.providers.HttpProvider("http://146.169.32.151:8545"));
-const mongoDetails = JSON.parse(fs.readFileSync("mongoconfig.json"));
+const mongoDetails = JSON.parse(fs.readFileSync(path.join(__dirname + "/mongoconfig.json")));
 
 const Account = require('./account.js');
 const mongoClient = require('mongodb').MongoClient;
