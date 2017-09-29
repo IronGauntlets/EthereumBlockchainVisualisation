@@ -94,7 +94,7 @@ app.get('/live/pending_transactions/gdo', function (req, res) {
 })
 
 // Start listening when running on local node
-var server = app.listen(8000, '0.0.0.0', function(){
+var server = app.listen(30303, '0.0.0.0', function(){
   var host = server.address().address;
   var port = server.address().port;
 
