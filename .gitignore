@@ -8,5 +8,5 @@ server/node_modules/
 client/node_modules/
 
 #Config
-server\scripts\mongoconfig.json
-server\models\mongoconfig.json
+server/scripts/mongoconfig.json
+server/models/mongoconfig.json
