@@ -6,3 +6,7 @@ client/logs
 # Dependency directories
 server/node_modules/
 client/node_modules/
+
+#Config
+server\scripts\mongoconfig.json
+server\models\mongoconfig.json
